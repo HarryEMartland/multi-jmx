@@ -48,7 +48,7 @@ public class MultiJMX {
         } else if (orderValue) {
             return objectStream.sorted(new JMXResponse.ValueComparator());
         }else{
-            throw new RuntimeException("Cannot order by value and display");
+            return objectStream;
         }
     }
 
