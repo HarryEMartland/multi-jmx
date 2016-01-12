@@ -1,18 +1,9 @@
 package uk.co.harrymartland.multijmx;
 
-import org.apache.commons.cli.*;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import sun.management.ConnectorAddressLink;
 import uk.co.harrymartland.multijmx.jmxrunner.PasswordJmxRunner;
 import uk.co.harrymartland.multijmx.jmxrunner.RemoteJmxRunner;
 
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
 import javax.management.remote.JMXServiceURL;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -21,66 +12,44 @@ import java.util.stream.Stream;
 
 public class MultiJMX {
 
-    public void run(String[] args) throws ParseException {
+    public void run(MultiJMXOptions multiJMXOptions) {
 
-        CommandLine cmd = new DefaultParser().parse(createOptions(), args);
+        ExecutorService executorService = createExecutorService(multiJMXOptions);
 
-        ExecutorService executorService = createExecutorService(cmd.getOptionValue("t"));
-
-        Stream<JMXResponse> objectStream = Arrays.asList(cmd.getArgs()).stream()
-                .map(url -> requestObject(executorService, url,
-                        cmd.getOptionValue("u"), cmd.getOptionValue("p"),
-                        createObjectName(cmd.getOptionValue("o")), cmd.getOptionValue("a")))
+        //todo execute in parallel
+        Stream<JMXResponse> objectStream = multiJMXOptions.getUrls().stream()
+                .map(url -> requestObject(executorService, multiJMXOptions, url))
                 .map(this::getObject);
 
-        objectStream = sort(objectStream, cmd.hasOption("v"), cmd.hasOption("d"));
+        objectStream = sort(objectStream, multiJMXOptions);
         objectStream.forEach(this::display);
 
         //todo close in finally
         executorService.shutdownNow();
     }
 
-    private Stream<JMXResponse> sort(Stream<JMXResponse> objectStream, boolean orderValue, boolean orderDisplay) {
-        if (orderDisplay && orderValue) {
-            throw new RuntimeException("Cannot order by value and display");
-        } else if (orderDisplay) {
-            return objectStream.sorted(new JMXResponse.DisplayComparator());
-        } else if (orderValue) {
-            return objectStream.sorted(new JMXResponse.ValueComparator());
-        }else{
-            return objectStream;
+    private Stream<JMXResponse> sort(Stream<JMXResponse> objectStream, MultiJMXOptions multiJMXOptions) {
+        if (multiJMXOptions.isOrdered()) {
+            if (multiJMXOptions.isOrderValue() && multiJMXOptions.isOrderDisplay()) {
+                throw new RuntimeException("Cannot order by value and display");
+            } else if (multiJMXOptions.isOrderDisplay()) {
+                return objectStream.sorted(new JMXResponse.DisplayComparator());
+            } else if (multiJMXOptions.isOrderValue()) {
+                return objectStream.sorted(new JMXResponse.ValueComparator());
+            }
         }
-    }
-
-    private Options createOptions() {
-        Options options = new Options();
-        options.addOption("v", "order-value", false, "Order the results by value");
-        options.addOption("d", "order-display", false, "Order the results by display");
-        options.addOption("t", "max-threads", true, "Maximum number of threads (default unlimited)");
-        options.addOption(Option.builder("o").argName("object-name").required().hasArg().desc("JMX object name to read from e.g. 'java.lang:type=OperatingSystem'").build());
-        options.addOption(Option.builder("a").argName("attribute").required().hasArg().desc("JMX attribute to read from e.g. 'AvailableProcessors'").build());
-        options.addOption("u", "username", true, "Username to connect to JMX server");
-        options.addOption("p", "password", true, "Password to connect to JMX server");
-        return options;
+        return objectStream;
     }
 
     private void display(JMXResponse jmxResponse) {
         System.out.printf("%s\t%s\n", jmxResponse.getDisplay(), jmxResponse.getValue());
     }
 
-    private ExecutorService createExecutorService(String maxInt) {
-        if (StringUtils.isNotBlank(maxInt) && NumberUtils.isParsable(maxInt)) {
-            return Executors.newFixedThreadPool(Integer.parseInt(maxInt));
+    private ExecutorService createExecutorService(MultiJMXOptions options) {
+        if (options.isThreadsLimited()) {
+            return Executors.newFixedThreadPool(options.getMaxThreads());
         } else {
             return Executors.newCachedThreadPool();
-        }
-    }
-
-    private ObjectName createObjectName(String objectName) {
-        try {
-            return new ObjectName(objectName);
-        } catch (MalformedObjectNameException e) {
-            throw new RuntimeException("Invalid Object Name", e);
         }
     }
 
@@ -93,38 +62,15 @@ public class MultiJMX {
         }
     }
 
-    private Future<JMXResponse> requestObject(ExecutorService executorService, String url, String username, String password, ObjectName objectName, String attribute) {
-        return executorService.submit(createJmxRunner(url, username, password, objectName, attribute));
+    private Future<JMXResponse> requestObject(ExecutorService executorService, MultiJMXOptions options, JMXServiceURL url) {
+        return executorService.submit(createJmxRunner(options, url));
     }
 
-    private JMXServiceURL createJMXServiceURL(String url) {
-        try {
-            if (NumberUtils.isParsable(url)) {
-                return new JMXServiceURL(ConnectorAddressLink.importFrom(Integer.parseInt(url)));
-            } else {
-                return new JMXServiceURL(url);
-            }
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("Invalid url", e);
-        } catch (IOException e) {
-            throw new RuntimeException("Url is not parsable as a number", e);
-        }
-    }
-
-    private RemoteJmxRunner createJmxRunner(String url, String username, String password, ObjectName objectName, String attribute) {
-        if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
-            return new PasswordJmxRunner(createJMXServiceURL(url), objectName, attribute, username, password, "Process: " + url);
+    private RemoteJmxRunner createJmxRunner(MultiJMXOptions options, JMXServiceURL url) {
+        if (options.isAuthenticationRequired()) {
+            return new PasswordJmxRunner(url, options.getObjectName(), options.getAttribute(), options.getUsername(), options.getPassword(), url.getHost());
         } else {
-            JMXServiceURL jmxServiceURL = createJMXServiceURL(url);
-            return new RemoteJmxRunner(jmxServiceURL, objectName, attribute, getDisplay(url));
-        }
-    }
-
-    private String getDisplay(String url) {
-        if (NumberUtils.isDigits(url)) {
-            return "Process: " + url;
-        } else {
-            return url;
+            return new RemoteJmxRunner(url, options.getObjectName(), options.getAttribute(), url.getHost());//todo display
         }
     }
 }
