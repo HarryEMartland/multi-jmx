@@ -29,13 +29,14 @@ public class MultiJMX {
 
         Stream<JMXResponse> objectStream = Arrays.asList(cmd.getArgs()).stream()
                 .map(url -> requestObject(executorService, url,
-                        cmd.getOptionValue("u"), cmd.getOptionValue("u"),
+                        cmd.getOptionValue("u"), cmd.getOptionValue("p"),
                         createObjectName(cmd.getOptionValue("o")), cmd.getOptionValue("a")))
                 .map(this::getObject);
 
         sort(objectStream, cmd.hasOption("v"), cmd.hasOption("d"));
         objectStream.forEach(this::display);
 
+        //todo close in finally
         executorService.shutdownNow();
     }
 
