@@ -33,20 +33,22 @@ public class MultiJMX {
                         createObjectName(cmd.getOptionValue("o")), cmd.getOptionValue("a")))
                 .map(this::getObject);
 
-        sort(objectStream, cmd.hasOption("v"), cmd.hasOption("d"));
+        objectStream = sort(objectStream, cmd.hasOption("v"), cmd.hasOption("d"));
         objectStream.forEach(this::display);
 
         //todo close in finally
         executorService.shutdownNow();
     }
 
-    private void sort(Stream<JMXResponse> objectStream, boolean orderValue, boolean orderDisplay) {
+    private Stream<JMXResponse> sort(Stream<JMXResponse> objectStream, boolean orderValue, boolean orderDisplay) {
         if (orderDisplay && orderValue) {
             throw new RuntimeException("Cannot order by value and display");
         } else if (orderDisplay) {
-            objectStream.sorted(new JMXResponse.DisplayComparator());
+            return objectStream.sorted(new JMXResponse.DisplayComparator());
         } else if (orderValue) {
-            objectStream.sorted(new JMXResponse.ValueComparator());
+            return objectStream.sorted(new JMXResponse.ValueComparator());
+        }else{
+            throw new RuntimeException("Cannot order by value and display");
         }
     }
 
