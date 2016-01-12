@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class MultiJMX {
@@ -19,10 +20,12 @@ public class MultiJMX {
         //todo execute in parallel
         Stream<JMXResponse> objectStream = multiJMXOptions.getUrls().stream()
                 .map(url -> requestObject(executorService, multiJMXOptions, url))
+                .collect(Collectors.toList())
+                .stream()
                 .map(this::getObject);
 
-        objectStream = sort(objectStream, multiJMXOptions);
-        objectStream.forEach(this::display);
+        sort(objectStream, multiJMXOptions)
+                .forEach(this::display);
 
         //todo close in finally
         executorService.shutdownNow();
