@@ -14,20 +14,23 @@ import java.util.stream.Stream;
 public class MultiJMX {
 
     public void run(MultiJMXOptions multiJMXOptions) {
+        ExecutorService executorService = null;
 
-        ExecutorService executorService = createExecutorService(multiJMXOptions);
+        try {
+            final ExecutorService finalExecutorService = executorService = createExecutorService(multiJMXOptions);
+            Stream<JMXResponse> objectStream = multiJMXOptions.getUrls().stream()
+                    .map(url -> requestObject(finalExecutorService, multiJMXOptions, url))
+                    .collect(Collectors.toList())
+                    .stream()
+                    .map(this::getObject);
 
-        Stream<JMXResponse> objectStream = multiJMXOptions.getUrls().stream()
-                .map(url -> requestObject(executorService, multiJMXOptions, url))
-                .collect(Collectors.toList())
-                .stream()
-                .map(this::getObject);
-
-        sort(objectStream, multiJMXOptions)
-                .forEach(this::display);
-
-        //todo close in finally
-        executorService.shutdownNow();
+            sort(objectStream, multiJMXOptions)
+                    .forEach(this::display);
+        } finally {
+            if (executorService != null) {
+                executorService.shutdownNow();
+            }
+        }
     }
 
     private Stream<JMXResponse> sort(Stream<JMXResponse> objectStream, MultiJMXOptions multiJMXOptions) {
