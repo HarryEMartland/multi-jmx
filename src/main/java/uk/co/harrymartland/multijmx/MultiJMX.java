@@ -17,7 +17,6 @@ public class MultiJMX {
 
         ExecutorService executorService = createExecutorService(multiJMXOptions);
 
-        //todo execute in parallel
         Stream<JMXResponse> objectStream = multiJMXOptions.getUrls().stream()
                 .map(url -> requestObject(executorService, multiJMXOptions, url))
                 .collect(Collectors.toList())
