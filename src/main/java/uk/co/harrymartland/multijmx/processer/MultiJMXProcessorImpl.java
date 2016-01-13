@@ -1,5 +1,7 @@
-package uk.co.harrymartland.multijmx;
+package uk.co.harrymartland.multijmx.processer;
 
+import uk.co.harrymartland.multijmx.domain.JMXResponse;
+import uk.co.harrymartland.multijmx.domain.MultiJMXOptions;
 import uk.co.harrymartland.multijmx.jmxrunner.PasswordJmxRunner;
 import uk.co.harrymartland.multijmx.jmxrunner.RemoteJmxRunner;
 
@@ -11,8 +13,9 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MultiJMX {
+public class MultiJMXProcessorImpl implements MultiJAEProcessor {
 
+    @Override
     public void run(MultiJMXOptions multiJMXOptions) {
         ExecutorService executorService = null;
 

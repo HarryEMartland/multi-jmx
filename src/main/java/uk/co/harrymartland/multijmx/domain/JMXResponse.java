@@ -1,4 +1,4 @@
-package uk.co.harrymartland.multijmx;
+package uk.co.harrymartland.multijmx.domain;
 
 import org.apache.commons.lang3.ObjectUtils;
 

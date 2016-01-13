@@ -1,6 +1,6 @@
 package uk.co.harrymartland.multijmx.jmxrunner;
 
-import uk.co.harrymartland.multijmx.JMXResponse;
+import uk.co.harrymartland.multijmx.domain.JMXResponse;
 
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
