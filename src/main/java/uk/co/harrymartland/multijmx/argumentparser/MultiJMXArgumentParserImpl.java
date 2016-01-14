@@ -29,6 +29,7 @@ public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
         multiJMXOptions.setObjectName(createObjectName(cmd.getOptionValue("o")));
         multiJMXOptions.setOrderDisplay(cmd.hasOption("d"));
         multiJMXOptions.setOrderValue(cmd.hasOption("v"));
+        multiJMXOptions.setReverseOrder(cmd.hasOption("r"));
         multiJMXOptions.setAttribute(cmd.getOptionValue("a"));
         multiJMXOptions.setPassword(cmd.getOptionValue("p"));
         multiJMXOptions.setUsername(cmd.getOptionValue("u"));
@@ -68,6 +69,7 @@ public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
         Options options = new Options();
         options.addOption("v", "order-value", false, "Order the results by value");
         options.addOption("d", "order-display", false, "Order the results by display");
+        options.addOption("r", "reverse-order", false, "Order the results in reverse");
         options.addOption("t", "max-threads", true, "Maximum number of threads (default unlimited)");
         options.addOption(Option.builder("o").longOpt("object-name").argName("object name").required().hasArg().desc("JMX object name to read from e.g. 'java.lang:type=OperatingSystem'").build());
         options.addOption(Option.builder("a").longOpt("attribute").argName("attribute").required().hasArg().desc("JMX attribute to read from e.g. 'AvailableProcessors'").build());

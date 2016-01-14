@@ -10,6 +10,7 @@ public class MultiJMXOptions {
 
     private boolean orderValue;
     private boolean orderDisplay;
+    private boolean reverseOrder;
     private Integer maxThreads;
     private ObjectName objectName;
     private String attribute;
@@ -31,6 +32,14 @@ public class MultiJMXOptions {
 
     public void setOrderDisplay(boolean orderDisplay) {
         this.orderDisplay = orderDisplay;
+    }
+
+    public boolean isReverseOrder() {
+        return reverseOrder;
+    }
+
+    public void setReverseOrder(boolean reverseOrder) {
+        this.reverseOrder = reverseOrder;
     }
 
     public boolean isOrdered() {

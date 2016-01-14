@@ -80,6 +80,20 @@ public class MultiJMXArgumentParserImplTest {
     }
 
     @Test
+    public void testShouldReturnReverseOrderShortName() throws Exception {
+        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(addToWorkingArgumentString("-r"));
+        Assert.assertTrue(multiJMXOptions.isReverseOrder());
+        Assert.assertFalse(multiJMXOptions.isOrdered());
+    }
+
+    @Test
+    public void testShouldReturnReverseOrderLongName() throws Exception {
+        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(addToWorkingArgumentString("-reverse-order"));
+        Assert.assertTrue(multiJMXOptions.isReverseOrder());
+        Assert.assertFalse(multiJMXOptions.isOrdered());
+    }
+
+    @Test
     public void testShouldReturnUserNamePasswordAndAuthenticationRequiredShortName() throws Exception {
         MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(addToWorkingArgumentString("-u username -p password"));
         Assert.assertEquals("username", multiJMXOptions.getUsername());

@@ -6,6 +6,7 @@ import uk.co.harrymartland.multijmx.jmxrunner.PasswordJmxRunner;
 import uk.co.harrymartland.multijmx.jmxrunner.RemoteJmxRunner;
 
 import javax.management.remote.JMXServiceURL;
+import java.util.Comparator;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -38,15 +39,27 @@ public class MultiJMXProcessorImpl implements MultiJAEProcessor {
 
     private Stream<JMXResponse> sort(Stream<JMXResponse> objectStream, MultiJMXOptions multiJMXOptions) {
         if (multiJMXOptions.isOrdered()) {
+            Comparator<JMXResponse> comparator = null;
             if (multiJMXOptions.isOrderValue() && multiJMXOptions.isOrderDisplay()) {
-                throw new RuntimeException("Cannot order by value and display");
+                throw new RuntimeException("Cannot order by value and display");//todo create and move to validation object
             } else if (multiJMXOptions.isOrderDisplay()) {
-                return objectStream.sorted(new JMXResponse.DisplayComparator());
+                comparator = new JMXResponse.DisplayComparator();
             } else if (multiJMXOptions.isOrderValue()) {
-                return objectStream.sorted(new JMXResponse.ValueComparator());
+                comparator = new JMXResponse.ValueComparator();
+            }
+
+            if (comparator != null) {
+                objectStream = objectStream.sorted(reverseComparator(comparator, multiJMXOptions.isReverseOrder()));
             }
         }
         return objectStream;
+    }
+
+    private Comparator<JMXResponse> reverseComparator(Comparator<JMXResponse> comparator, boolean reverse) {
+        if (reverse) {
+            comparator = comparator.reversed();
+        }
+        return comparator;
     }
 
     private void display(JMXResponse jmxResponse) {
