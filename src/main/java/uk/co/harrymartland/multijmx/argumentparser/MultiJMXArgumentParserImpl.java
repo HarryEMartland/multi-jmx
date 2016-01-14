@@ -16,16 +16,12 @@ import java.util.stream.Collectors;
 
 public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
 
+    private Options options = null;
+
     @Override
     public MultiJMXOptions parseArguments(String[] args) throws ParseException {
-        Options options = createOptions();
 
-        if (args.length == 0 || args[0].equalsIgnoreCase("-h")) {
-            new HelpFormatter().printHelp("multi-jmx", options, true);
-            System.exit(0);//todo not too keen on this
-        }
-
-        CommandLine cmd = new DefaultParser().parse(options, args);
+        CommandLine cmd = new DefaultParser().parse(getOptions(), args);
         MultiJMXOptions multiJMXOptions = new MultiJMXOptions();
 
         multiJMXOptions.setAttribute(cmd.getOptionValue("a"));
@@ -60,6 +56,14 @@ public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
         return null;
     }
 
+    @Override
+    public Options getOptions() {
+        if (options == null) {
+            options = createOptions();
+        }
+        return options;
+    }
+
     private Options createOptions() {
         Options options = new Options();
         options.addOption("v", "order-value", false, "Order the results by value");
@@ -69,6 +73,7 @@ public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
         options.addOption(Option.builder("a").longOpt("attribute").argName("attribute").required().hasArg().desc("JMX attribute to read from e.g. 'AvailableProcessors'").build());
         options.addOption("u", "username", true, "Username to connect to JMX server");
         options.addOption("p", "password", true, "Password to connect to JMX server");
+        options.addOption(Option.builder(HELP_SHORT_OPTION).longOpt(HELP_LONG_OPTION).hasArg(false).desc("Desplay help").build());
         return options;
     }
 
