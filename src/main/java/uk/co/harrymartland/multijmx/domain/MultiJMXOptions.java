@@ -1,9 +1,9 @@
 package uk.co.harrymartland.multijmx.domain;
 
 import org.apache.commons.lang3.StringUtils;
+import uk.co.harrymartland.multijmx.domain.connection.JMXConnection;
 
 import javax.management.ObjectName;
-import javax.management.remote.JMXServiceURL;
 import java.util.List;
 
 public class MultiJMXOptions {
@@ -16,7 +16,7 @@ public class MultiJMXOptions {
     private String attribute;
     private String username;
     private String password;
-    private List<JMXServiceURL> urls;
+    private List<JMXConnection> urls;
 
     public boolean isOrderValue() {
         return orderValue;
@@ -94,11 +94,11 @@ public class MultiJMXOptions {
         return StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password);
     }
 
-    public List<JMXServiceURL> getUrls() {
+    public List<JMXConnection> getUrls() {
         return urls;
     }
 
-    public void setUrls(List<JMXServiceURL> urls) {
+    public void setUrls(List<JMXConnection> urls) {
         this.urls = urls;
     }
 }

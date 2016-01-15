@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import sun.management.ConnectorAddressLink;
 import uk.co.harrymartland.multijmx.domain.MultiJMXOptions;
+import uk.co.harrymartland.multijmx.domain.connection.JMXConnection;
 
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -33,13 +34,13 @@ public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
         multiJMXOptions.setAttribute(cmd.getOptionValue("a"));
         multiJMXOptions.setPassword(cmd.getOptionValue("p"));
         multiJMXOptions.setUsername(cmd.getOptionValue("u"));
-        multiJMXOptions.setUrls(createUrls(cmd));
+        multiJMXOptions.setUrls(createConnections(cmd));
 
         return multiJMXOptions;
     }
 
-    private List<JMXServiceURL> createUrls(CommandLine cmd) {
-        return cmd.getArgList().stream().map(this::createJMXServiceURL).collect(Collectors.toList());
+    private List<JMXConnection> createConnections(CommandLine cmd) {
+        return cmd.getArgList().stream().map(this::createJMXConnection).collect(Collectors.toList());
     }
 
     private ObjectName createObjectName(String objectName) {
@@ -65,6 +66,7 @@ public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
         return options;
     }
 
+    //todo option tor read urls from file
     private Options createOptions() {
         Options options = new Options();
         options.addOption("v", "order-value", false, "Order the results by value");
@@ -79,16 +81,17 @@ public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
         return options;
     }
 
-    private JMXServiceURL createJMXServiceURL(String url) {
+    private JMXConnection createJMXConnection(String url) {
         try {
             if (NumberUtils.isParsable(url)) {
                 String s = ConnectorAddressLink.importFrom(Integer.parseInt(url));
                 if (StringUtils.isBlank(s)) {
                     throw new RuntimeException("No process found for id: " + url);
                 }
-                return new JMXServiceURL(s);
+                return new JMXConnection("Process: " + url, new JMXServiceURL(s));
             } else {
-                return new JMXServiceURL(url);
+                JMXServiceURL jmxServiceURL = new JMXServiceURL(url);
+                return new JMXConnection(jmxServiceURL.getHost(), jmxServiceURL);
             }
         } catch (MalformedURLException e) {
             throw new RuntimeException("Invalid url: " + url, e);

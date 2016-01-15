@@ -2,10 +2,10 @@ package uk.co.harrymartland.multijmx.processer;
 
 import uk.co.harrymartland.multijmx.domain.JMXResponse;
 import uk.co.harrymartland.multijmx.domain.MultiJMXOptions;
+import uk.co.harrymartland.multijmx.domain.connection.JMXConnection;
 import uk.co.harrymartland.multijmx.jmxrunner.PasswordJmxRunner;
 import uk.co.harrymartland.multijmx.jmxrunner.RemoteJmxRunner;
 
-import javax.management.remote.JMXServiceURL;
 import java.util.Comparator;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -17,19 +17,18 @@ import java.util.stream.Stream;
 public class MultiJMXProcessorImpl implements MultiJAEProcessor {
 
     @Override
-    public void run(MultiJMXOptions multiJMXOptions) {
+    public Stream<JMXResponse> run(MultiJMXOptions multiJMXOptions) {
         ExecutorService executorService = null;
 
         try {
             final ExecutorService finalExecutorService = executorService = createExecutorService(multiJMXOptions);
             Stream<JMXResponse> objectStream = multiJMXOptions.getUrls().stream()
-                    .map(url -> requestObject(finalExecutorService, multiJMXOptions, url))
+                    .map(connection -> requestObject(finalExecutorService, multiJMXOptions, connection))
                     .collect(Collectors.toList())
                     .stream()
                     .map(this::getObject);
 
-            sort(objectStream, multiJMXOptions)
-                    .forEach(this::display);
+            return sort(objectStream, multiJMXOptions);
         } finally {
             if (executorService != null) {
                 executorService.shutdownNow();
@@ -83,15 +82,15 @@ public class MultiJMXProcessorImpl implements MultiJAEProcessor {
         }
     }
 
-    private Future<JMXResponse> requestObject(ExecutorService executorService, MultiJMXOptions options, JMXServiceURL url) {
-        return executorService.submit(createJmxRunner(options, url));
+    private Future<JMXResponse> requestObject(ExecutorService executorService, MultiJMXOptions options, JMXConnection connection) {
+        return executorService.submit(createJmxRunner(options, connection));
     }
 
-    private RemoteJmxRunner createJmxRunner(MultiJMXOptions options, JMXServiceURL url) {
+    private RemoteJmxRunner createJmxRunner(MultiJMXOptions options, JMXConnection connection) {
         if (options.isAuthenticationRequired()) {
-            return new PasswordJmxRunner(url, options.getObjectName(), options.getAttribute(), options.getUsername(), options.getPassword(), url.getHost());
+            return new PasswordJmxRunner(options.getObjectName(), options.getAttribute(), connection, options.getUsername(), options.getPassword());
         } else {
-            return new RemoteJmxRunner(url, options.getObjectName(), options.getAttribute(), url.getHost());//todo display
+            return new RemoteJmxRunner(options.getObjectName(), options.getAttribute(), connection);
         }
     }
 }

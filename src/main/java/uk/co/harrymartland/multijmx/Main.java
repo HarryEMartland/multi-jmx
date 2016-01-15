@@ -4,6 +4,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.ParseException;
 import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParser;
 import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParserImpl;
+import uk.co.harrymartland.multijmx.domain.JMXResponse;
 import uk.co.harrymartland.multijmx.processer.MultiJAEProcessor;
 import uk.co.harrymartland.multijmx.processer.MultiJMXProcessorImpl;
 
@@ -21,7 +22,17 @@ public class Main {
             new HelpFormatter().printHelp("multi-jmx", multiJMXArgumentParser.getOptions(), true);
         }
         if (args.length > 0) {
-            multiJMXProcessor.run(multiJMXArgumentParser.parseArguments(args));
+            multiJMXProcessor.run(multiJMXArgumentParser.parseArguments(args)).forEach(this::display);
+            //todo if errors give user option to show stack traces
+        }
+    }
+
+    private void display(JMXResponse jmxResponse) {
+        System.out.print(jmxResponse.getDisplay() + "\t");
+        if (jmxResponse.isError()) {
+            System.out.println("ERROR (" + jmxResponse.getException().getMessage() + ")");
+        } else {
+            System.out.println(jmxResponse.getValue());
         }
     }
 
