@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 
 public class MultiJMXProcessorImpl implements MultiJAEProcessor {
 
+
     @Override
     public Stream<JMXResponse> run(MultiJMXOptions multiJMXOptions) {
         ExecutorService executorService = null;
@@ -59,10 +60,6 @@ public class MultiJMXProcessorImpl implements MultiJAEProcessor {
             comparator = comparator.reversed();
         }
         return comparator;
-    }
-
-    private void display(JMXResponse jmxResponse) {
-        System.out.printf("%s\t%s\n", jmxResponse.getDisplay(), jmxResponse.getValue());
     }
 
     private ExecutorService createExecutorService(MultiJMXOptions options) {
