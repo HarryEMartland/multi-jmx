@@ -8,6 +8,12 @@ import uk.co.harrymartland.multijmx.domain.JMXResponse;
 import uk.co.harrymartland.multijmx.processer.MultiJAEProcessor;
 import uk.co.harrymartland.multijmx.processer.MultiJMXProcessorImpl;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParser.HELP_LONG_OPTION;
 import static uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParser.HELP_SHORT_OPTION;
 
@@ -22,10 +28,38 @@ public class Main {
             new HelpFormatter().printHelp("multi-jmx", multiJMXArgumentParser.getOptions(), true);
         }
         if (args.length > 0) {
-            multiJMXProcessor.run(multiJMXArgumentParser.parseArguments(args)).forEach(this::display);
-            //todo if errors give user option to show stack traces
+            List<JMXResponse> errors = multiJMXProcessor.run(multiJMXArgumentParser.parseArguments(args))
+                    .peek(this::display)
+                    .filter(JMXResponse::isError)
+                    .collect(Collectors.toList());
+
+            if (!errors.isEmpty()) {
+
+                displayErrors(errors);
+            }
         }
     }
+
+    private void displayErrors(List<JMXResponse> errors) {
+        BufferedReader reader = null;
+        InputStreamReader inputStream = null;
+        try {
+            System.out.println("errors have occurred (" + errors.size() + ")");
+            inputStream = new InputStreamReader(System.in);
+            reader = new BufferedReader(inputStream);
+            for (JMXResponse error : errors) {
+                System.out.println("Press enter to see next stack trace");
+                reader.readLine();
+                error.getException().printStackTrace();
+            }
+        } catch (IOException e) {
+            ExceptionUtils.eat(e);
+        } finally {
+            ExceptionUtils.closeQuietly(reader);
+            ExceptionUtils.closeQuietly(inputStream);
+        }
+    }
+
 
     private void display(JMXResponse jmxResponse) {
         System.out.print(jmxResponse.getDisplay() + "\t");

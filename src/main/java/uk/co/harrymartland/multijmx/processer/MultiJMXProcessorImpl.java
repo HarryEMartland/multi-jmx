@@ -74,8 +74,7 @@ public class MultiJMXProcessorImpl implements MultiJAEProcessor {
         try {
             return objectFuture.get();
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();//todo logger
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
