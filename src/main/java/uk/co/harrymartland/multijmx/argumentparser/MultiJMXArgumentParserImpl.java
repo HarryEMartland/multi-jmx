@@ -61,7 +61,7 @@ public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Error reading connection file", e);
         } catch (IOException e) {
-            throw new RuntimeException("Could not find connection file", e);//todo change runtime exceptions
+            throw new RuntimeException("Could not find connection file", e);
         }
     }
 

@@ -41,7 +41,7 @@ public class MultiJMXProcessorImpl implements MultiJAEProcessor {
         if (multiJMXOptions.isOrdered()) {
             Comparator<JMXResponse> comparator = null;
             if (multiJMXOptions.isOrderValue() && multiJMXOptions.isOrderDisplay()) {
-                throw new RuntimeException("Cannot order by value and display");//todo create and move to validation object
+                throw new RuntimeException("Cannot order by value and display");
             } else if (multiJMXOptions.isOrderDisplay()) {
                 comparator = new JMXResponse.DisplayComparator();
             } else if (multiJMXOptions.isOrderValue()) {
