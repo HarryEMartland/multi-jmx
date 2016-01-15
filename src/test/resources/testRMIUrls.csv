@@ -1,0 +1,3 @@
+service:jmx:rmi://test1/jndi/rmi://:9999/jmxrmi
+service:jmx:rmi://test2/jndi/rmi://:9999/jmxrmi
+service:jmx:rmi://test3/jndi/rmi://:9999/jmxrmi

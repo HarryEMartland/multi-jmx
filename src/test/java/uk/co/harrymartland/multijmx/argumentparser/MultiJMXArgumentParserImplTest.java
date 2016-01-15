@@ -5,9 +5,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import uk.co.harrymartland.multijmx.domain.MultiJMXOptions;
+import uk.co.harrymartland.multijmx.domain.connection.JMXConnection;
 
 import javax.management.ObjectName;
 import javax.management.remote.JMXServiceURL;
+import java.net.URL;
 
 public class MultiJMXArgumentParserImplTest {
 
@@ -111,22 +113,55 @@ public class MultiJMXArgumentParserImplTest {
 
     @Test
     public void testUrlGenerationRMI() throws Exception {
-        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(addToWorkingArgumentString("service:jmx:rmi:///jndi/rmi://:9999/jmxrmi"));
+        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(addToWorkingArgumentString("service:jmx:rmi://test/jndi/rmi://:9999/jmxrmi"));
         Assert.assertEquals(1, multiJMXOptions.getUrls().size());
-        Assert.assertEquals(new JMXServiceURL("service:jmx:rmi:///jndi/rmi://:9999/jmxrmi"), multiJMXOptions.getUrls().get(0));
+        assertJMXConnection(new JMXConnection("test", new JMXServiceURL("service:jmx:rmi://test/jndi/rmi://:9999/jmxrmi")), multiJMXOptions.getUrls().get(0));
     }
 
     @Test
     public void testUrlGenerationRMIMultiple() throws Exception {
-        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(addToWorkingArgumentString("service:jmx:rmi:///jndi/rmi://:9999/jmxrmi service:jmx:rmi:///jndi/rmi://:9999/jmxrmi"));
+        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(addToWorkingArgumentString("service:jmx:rmi://test1/jndi/rmi://:9999/jmxrmi service:jmx:rmi://test2/jndi/rmi://:9999/jmxrmi"));
         Assert.assertEquals(2, multiJMXOptions.getUrls().size());
-        Assert.assertEquals(new JMXServiceURL("service:jmx:rmi:///jndi/rmi://:9999/jmxrmi"), multiJMXOptions.getUrls().get(0));
-        Assert.assertEquals(new JMXServiceURL("service:jmx:rmi:///jndi/rmi://:9999/jmxrmi"), multiJMXOptions.getUrls().get(1));
+        assertJMXConnection(new JMXConnection("test1", new JMXServiceURL("service:jmx:rmi://test1/jndi/rmi://:9999/jmxrmi")), multiJMXOptions.getUrls().get(0));
+        assertJMXConnection(new JMXConnection("test2", new JMXServiceURL("service:jmx:rmi://test2/jndi/rmi://:9999/jmxrmi")), multiJMXOptions.getUrls().get(1));
     }
 
     @Test
     public void testUrlGenerationProcessId() throws Exception {
-        //todo
+        //todo test get process id url
+    }
+
+    @Test
+    public void testShouldReadConnectionsFromFile() throws Exception {
+        URL resource = getClass().getResource("/testRMIUrls.csv");
+
+        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(addToWorkingArgumentString("-f " + resource.getPath()));
+        Assert.assertEquals(3, multiJMXOptions.getUrls().size());
+        assertJMXConnection(new JMXConnection("test1", new JMXServiceURL("service:jmx:rmi://test1/jndi/rmi://:9999/jmxrmi")), multiJMXOptions.getUrls().get(0));
+        assertJMXConnection(new JMXConnection("test2", new JMXServiceURL("service:jmx:rmi://test2/jndi/rmi://:9999/jmxrmi")), multiJMXOptions.getUrls().get(1));
+        assertJMXConnection(new JMXConnection("test3", new JMXServiceURL("service:jmx:rmi://test3/jndi/rmi://:9999/jmxrmi")), multiJMXOptions.getUrls().get(2));
+    }
+
+    @Test
+    public void testShouldReadConnectionsFromFileAndCMDLine() throws Exception {
+        URL resource = getClass().getResource("/testRMIUrls.csv");
+
+        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(addToWorkingArgumentString("-f " + resource.getPath() + " service:jmx:rmi://test4/jndi/rmi://:9999/jmxrmi"));
+        Assert.assertEquals(4, multiJMXOptions.getUrls().size());
+        assertJMXConnection(new JMXConnection("test1", new JMXServiceURL("service:jmx:rmi://test1/jndi/rmi://:9999/jmxrmi")), multiJMXOptions.getUrls().get(0));
+        assertJMXConnection(new JMXConnection("test2", new JMXServiceURL("service:jmx:rmi://test2/jndi/rmi://:9999/jmxrmi")), multiJMXOptions.getUrls().get(1));
+        assertJMXConnection(new JMXConnection("test3", new JMXServiceURL("service:jmx:rmi://test3/jndi/rmi://:9999/jmxrmi")), multiJMXOptions.getUrls().get(2));
+        assertJMXConnection(new JMXConnection("test4", new JMXServiceURL("service:jmx:rmi://test4/jndi/rmi://:9999/jmxrmi")), multiJMXOptions.getUrls().get(3));
+    }
+
+    @Test
+    public void testShouldReadProcessConnectionFromFile() throws Exception {
+        //todo test get process id url from file
+    }
+
+    @Test
+    public void testSouldReadProcessConnectionFromFileAndCMDLine() throws Exception {
+        //todo test get process id url from file and cmd line
     }
 
     private String[] addToWorkingArgumentString(String toAdd) {
@@ -135,5 +170,10 @@ public class MultiJMXArgumentParserImplTest {
 
     private String[] arguments(String string) {
         return StringUtils.split(string, " ");
+    }
+
+    private void assertJMXConnection(JMXConnection actual, JMXConnection expected) {
+        Assert.assertEquals(actual.getDisplay(), expected.getDisplay());
+        Assert.assertEquals(actual.getJmxServiceURL(), expected.getJmxServiceURL());
     }
 }

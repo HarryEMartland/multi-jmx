@@ -10,10 +10,14 @@ import uk.co.harrymartland.multijmx.domain.connection.JMXConnection;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.remote.JMXServiceURL;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
 
@@ -40,7 +44,25 @@ public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
     }
 
     private List<JMXConnection> createConnections(CommandLine cmd) {
-        return cmd.getArgList().stream().map(this::createJMXConnection).collect(Collectors.toList());
+
+        Stream<String> connectionStrings = cmd.getArgList().stream();
+
+        if (cmd.hasOption("f")) {
+            Stream<String> connectionsFromFile = loadConnectsFromFile(cmd.getOptionValue("f"));
+            connectionStrings = Stream.concat(connectionsFromFile, connectionStrings);
+        }
+
+        return connectionStrings.map(this::createJMXConnection).collect(Collectors.toList());
+    }
+
+    private Stream<String> loadConnectsFromFile(String fileName) {
+        try {
+            return Files.lines(new File(fileName).toPath());
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Error reading connection file", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Could not find connection file", e);//todo change runtime exceptions
+        }
     }
 
     private ObjectName createObjectName(String objectName) {
@@ -66,7 +88,6 @@ public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
         return options;
     }
 
-    //todo option tor read urls from file
     private Options createOptions() {
         Options options = new Options();
         options.addOption("v", "order-value", false, "Order the results by value");
@@ -77,6 +98,7 @@ public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
         options.addOption(Option.builder("a").longOpt("attribute").argName("attribute").required().hasArg().desc("JMX attribute to read from e.g. 'AvailableProcessors'").build());
         options.addOption("u", "username", true, "Username to connect to JMX server");
         options.addOption("p", "password", true, "Password to connect to JMX server");
+        options.addOption("f", "file", true, "Read JMX connections from file");
         options.addOption(Option.builder(HELP_SHORT_OPTION).longOpt(HELP_LONG_OPTION).hasArg(false).desc("Desplay help").build());
         return options;
     }
