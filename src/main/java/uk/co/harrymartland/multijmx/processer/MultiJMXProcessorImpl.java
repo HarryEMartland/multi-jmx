@@ -40,11 +40,11 @@ public class MultiJMXProcessorImpl implements MultiJAEProcessor {
     private Stream<JMXResponse> sort(Stream<JMXResponse> objectStream, MultiJMXOptions multiJMXOptions) {
         if (multiJMXOptions.isOrdered()) {
             Comparator<JMXResponse> comparator = null;
-            if (multiJMXOptions.isOrderValue() && multiJMXOptions.isOrderDisplay()) {
-                throw new RuntimeException("Cannot order by value and display");
-            } else if (multiJMXOptions.isOrderDisplay()) {
+
+            if (multiJMXOptions.isOrderDisplay()) {
                 comparator = new JMXResponse.DisplayComparator();
-            } else if (multiJMXOptions.isOrderValue()) {
+            }
+            if (multiJMXOptions.isOrderValue()) {
                 comparator = new JMXResponse.ValueComparator();
             }
 

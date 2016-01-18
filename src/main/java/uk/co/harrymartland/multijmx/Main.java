@@ -7,6 +7,9 @@ import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParserImpl;
 import uk.co.harrymartland.multijmx.domain.JMXResponse;
 import uk.co.harrymartland.multijmx.processer.MultiJAEProcessor;
 import uk.co.harrymartland.multijmx.processer.MultiJMXProcessorImpl;
+import uk.co.harrymartland.multijmx.validator.MultiJMXOptionValidator;
+import uk.co.harrymartland.multijmx.validator.MultiJMXOptionValidatorImpl;
+import uk.co.harrymartland.multijmx.validator.ValidationException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,16 +22,18 @@ import static uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParser
 
 public class Main {
 
-    public static void main(String[] args) throws ParseException {
-        new Main().run(new MultiJMXArgumentParserImpl(), new MultiJMXProcessorImpl(), args);
+    public static void main(String[] args) throws ParseException, ValidationException {
+        new Main().run(new MultiJMXArgumentParserImpl(), new MultiJMXProcessorImpl(), new MultiJMXOptionValidatorImpl(), args);
     }
 
-    public void run(MultiJMXArgumentParser multiJMXArgumentParser, MultiJAEProcessor multiJMXProcessor, String[] args) throws ParseException {
+    public void run(MultiJMXArgumentParser multiJMXArgumentParser, MultiJAEProcessor multiJMXProcessor,
+                    MultiJMXOptionValidator multiJMXOptionValidator, String[] args) throws ParseException, ValidationException {
+
         if (isDisplayHelp(args)) {
             new HelpFormatter().printHelp("multi-jmx", multiJMXArgumentParser.getOptions(), true);
         }
         if (args.length > 0) {
-            List<JMXResponse> errors = multiJMXProcessor.run(multiJMXArgumentParser.parseArguments(args))
+            List<JMXResponse> errors = multiJMXProcessor.run(multiJMXOptionValidator.validate(multiJMXArgumentParser.parseArguments(args)))
                     .peek(this::display)
                     .filter(JMXResponse::isError)
                     .collect(Collectors.toList());
