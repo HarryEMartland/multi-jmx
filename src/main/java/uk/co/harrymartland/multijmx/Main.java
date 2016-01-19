@@ -69,7 +69,7 @@ public class Main {
     }
 
 
-    private void display(JMXResponse jmxResponse, String delimiter) {//todo use arg for delimiter
+    private void display(JMXResponse jmxResponse, String delimiter) {
         System.out.print(jmxResponse.getDisplay() + delimiter);
         if (jmxResponse.isError()) {
             System.out.println("ERROR (" + jmxResponse.getException().getMessage() + ")");
