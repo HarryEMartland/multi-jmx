@@ -18,9 +18,9 @@ public class MultiJMXOptionValidatorImplTest {
     private MultiJMXOptionValidator multiJMXOptionValidator = new MultiJMXOptionValidatorImpl();
 
     @Test
-    public void testShouldThrowExceptionWhenOrderByValueAndDisplay() throws Exception {
+    public void testShouldThrowExceptionWhenOrderByValueAndConnection() throws Exception {
         MultiJMXOptions multiJMXOptions = new MultiJMXOptions();
-        multiJMXOptions.setOrderDisplay(true);
+        multiJMXOptions.setOrderConnection(true);
         multiJMXOptions.setOrderValue(true);
         assertExceptionThrown(multiJMXOptions, "Cannot order by value and display");
     }

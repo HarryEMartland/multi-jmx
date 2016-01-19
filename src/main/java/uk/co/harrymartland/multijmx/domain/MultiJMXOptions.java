@@ -9,7 +9,7 @@ import java.util.List;
 public class MultiJMXOptions {
 
     private boolean orderValue;
-    private boolean orderDisplay;
+    private boolean orderConnection;
     private boolean reverseOrder;
     private Integer maxThreads;
     private List<ObjectName> objectNames;
@@ -17,6 +17,7 @@ public class MultiJMXOptions {
     private String username;
     private String password;
     private List<JMXConnection> urls;
+    private String delimiter;
 
     public boolean isOrderValue() {
         return orderValue;
@@ -26,12 +27,12 @@ public class MultiJMXOptions {
         this.orderValue = orderValue;
     }
 
-    public boolean isOrderDisplay() {
-        return orderDisplay;
+    public boolean isOrderConnection() {
+        return orderConnection;
     }
 
-    public void setOrderDisplay(boolean orderDisplay) {
-        this.orderDisplay = orderDisplay;
+    public void setOrderConnection(boolean orderDisplay) {
+        this.orderConnection = orderDisplay;
     }
 
     public boolean isReverseOrder() {
@@ -43,7 +44,7 @@ public class MultiJMXOptions {
     }
 
     public boolean isOrdered() {
-        return isOrderDisplay() || isOrderValue();
+        return isOrderConnection() || isOrderValue();
     }
 
     public boolean isThreadsLimited() {
@@ -100,5 +101,13 @@ public class MultiJMXOptions {
 
     public void setUrls(List<JMXConnection> urls) {
         this.urls = urls;
+    }
+
+    public void setDelimiter(String delimiter) {
+        this.delimiter = delimiter;
+    }
+
+    public String getDelimiter() {
+        return delimiter;
     }
 }

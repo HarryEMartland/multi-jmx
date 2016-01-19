@@ -5,6 +5,7 @@ import org.apache.commons.cli.ParseException;
 import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParser;
 import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParserImpl;
 import uk.co.harrymartland.multijmx.domain.JMXResponse;
+import uk.co.harrymartland.multijmx.domain.MultiJMXOptions;
 import uk.co.harrymartland.multijmx.processer.MultiJAEProcessor;
 import uk.co.harrymartland.multijmx.processer.MultiJMXProcessorImpl;
 import uk.co.harrymartland.multijmx.validator.MultiJMXOptionValidator;
@@ -34,8 +35,9 @@ public class Main {
             new HelpFormatter().printHelp("multi-jmx", multiJMXArgumentParser.getOptions(), true);
         }
         if (args.length > 0) {
-            List<JMXResponse> errors = multiJMXProcessor.run(multiJMXOptionValidator.validate(multiJMXArgumentParser.parseArguments(args)))
-                    .peek(jmxResponse -> display(jmxResponse, "\t"))
+            MultiJMXOptions jmxOptions = multiJMXOptionValidator.validate(multiJMXArgumentParser.parseArguments(args));
+            List<JMXResponse> errors = multiJMXProcessor.run(jmxOptions)
+                    .peek(jmxResponse -> display(jmxResponse, jmxOptions.getDelimiter()))
                     .filter(JMXResponse::isError)
                     .collect(Collectors.toList());
 

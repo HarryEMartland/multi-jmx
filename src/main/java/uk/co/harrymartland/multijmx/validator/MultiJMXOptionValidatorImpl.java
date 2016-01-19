@@ -19,8 +19,8 @@ public class MultiJMXOptionValidatorImpl implements MultiJMXOptionValidator {
     }
 
     private void validateOrder(MultiJMXOptions multiJMXOptions) throws ValidationException {
-        if (multiJMXOptions.isOrderDisplay() && multiJMXOptions.isOrderValue()) {
-            throw new ValidationException("Cannot order by value and display");
+        if (multiJMXOptions.isOrderConnection() && multiJMXOptions.isOrderValue()) {
+            throw new ValidationException("Cannot order by connection and display");
         }
     }
 }

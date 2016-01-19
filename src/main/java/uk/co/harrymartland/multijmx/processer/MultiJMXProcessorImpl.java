@@ -41,7 +41,7 @@ public class MultiJMXProcessorImpl implements MultiJAEProcessor {
         if (multiJMXOptions.isOrdered()) {
             Comparator<JMXResponse> comparator = null;
 
-            if (multiJMXOptions.isOrderDisplay()) {
+            if (multiJMXOptions.isOrderConnection()) {
                 comparator = new JMXResponse.DisplayComparator();
             }
             if (multiJMXOptions.isOrderValue()) {

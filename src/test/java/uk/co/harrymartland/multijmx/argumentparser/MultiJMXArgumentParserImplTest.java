@@ -84,16 +84,16 @@ public class MultiJMXArgumentParserImplTest {
     }
 
     @Test
-    public void testShouldReturnOrderDisplayShortName() throws Exception {
-        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(addToWorkingArgumentString("-d"));
-        Assert.assertTrue(multiJMXOptions.isOrderDisplay());
+    public void testShouldReturnOrderConnectionShortName() throws Exception {
+        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(addToWorkingArgumentString("-c"));
+        Assert.assertTrue(multiJMXOptions.isOrderConnection());
         Assert.assertTrue(multiJMXOptions.isOrdered());
     }
 
     @Test
-    public void testShouldReturnOrderDisplayLongName() throws Exception {
-        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(addToWorkingArgumentString("-order-display"));
-        Assert.assertTrue(multiJMXOptions.isOrderDisplay());
+    public void testShouldReturnOrderConnectionLongName() throws Exception {
+        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(addToWorkingArgumentString("-order-connection"));
+        Assert.assertTrue(multiJMXOptions.isOrderConnection());
         Assert.assertTrue(multiJMXOptions.isOrdered());
     }
 
@@ -109,6 +109,24 @@ public class MultiJMXArgumentParserImplTest {
         MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(addToWorkingArgumentString("-reverse-order"));
         Assert.assertTrue(multiJMXOptions.isReverseOrder());
         Assert.assertFalse(multiJMXOptions.isOrdered());
+    }
+
+    @Test
+    public void testShouldReturnDefaultDelemiter() throws Exception {
+        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(addToWorkingArgumentString(""));
+        Assert.assertEquals("\t", multiJMXOptions.getDelimiter());
+    }
+
+    @Test
+    public void testShouldReturnDelimiterShortName() throws Exception {
+        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(addToWorkingArgumentString("-d ,"));
+        Assert.assertEquals(",", multiJMXOptions.getDelimiter());
+    }
+
+    @Test
+    public void testShouldReturnDelimiterLongName() throws Exception {
+        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(addToWorkingArgumentString("-delimiter ,"));
+        Assert.assertEquals(",", multiJMXOptions.getDelimiter());
     }
 
     @Test

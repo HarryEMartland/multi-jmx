@@ -22,6 +22,8 @@ import java.util.stream.Stream;
 
 public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
 
+    private static final String DELEMITER_DEFAULT = "\t";
+
     private Options options = null;
 
     @Override
@@ -33,12 +35,13 @@ public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
         multiJMXOptions.setAttributes(Arrays.asList(cmd.getOptionValues("a")));
         multiJMXOptions.setMaxThreads(getMaxThreads(cmd));
         multiJMXOptions.setObjectNames(createObjectNames(cmd.getOptionValues("o")));
-        multiJMXOptions.setOrderDisplay(cmd.hasOption("d"));
+        multiJMXOptions.setOrderConnection(cmd.hasOption("c"));
         multiJMXOptions.setOrderValue(cmd.hasOption("v"));
         multiJMXOptions.setReverseOrder(cmd.hasOption("r"));
         multiJMXOptions.setPassword(cmd.getOptionValue("p"));
         multiJMXOptions.setUsername(cmd.getOptionValue("u"));
         multiJMXOptions.setUrls(createConnections(cmd));
+        multiJMXOptions.setDelimiter(cmd.getOptionValue("d", DELEMITER_DEFAULT));
 
         return multiJMXOptions;
     }
@@ -95,7 +98,7 @@ public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
     private Options createOptions() {
         Options options = new Options();
         options.addOption("v", "order-value", false, "Order the results by value");
-        options.addOption("d", "order-display", false, "Order the results by display");
+        options.addOption("c", "order-connection", false, "Order the results by connection");
         options.addOption("r", "reverse-order", false, "Order the results in reverse");
         options.addOption("t", "max-threads", true, "Maximum number of threads (default unlimited)");
         options.addOption(Option.builder("o").longOpt("object-name").argName("object name").required().hasArg().desc("JMX object name to read from e.g. 'java.lang:type=OperatingSystem'").build());
@@ -104,6 +107,7 @@ public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
         options.addOption("p", "password", true, "Password to connect to JMX server");
         options.addOption("f", "file", true, "Read JMX connections from file");
         options.addOption(Option.builder(HELP_SHORT_OPTION).longOpt(HELP_LONG_OPTION).hasArg(false).desc("Desplay help").build());
+        options.addOption(Option.builder("d").longOpt("delimiter").hasArg().numberOfArgs(1).desc("Delemiter used to split results").build());
         return options;
     }
 
