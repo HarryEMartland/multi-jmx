@@ -22,7 +22,7 @@ public class MultiJMXOptionValidatorImplTest {
         MultiJMXOptions multiJMXOptions = new MultiJMXOptions();
         multiJMXOptions.setOrderConnection(true);
         multiJMXOptions.setOrderValue(true);
-        assertExceptionThrown(multiJMXOptions, "Cannot order by value and display");
+        assertExceptionThrown(multiJMXOptions, "Cannot order by connection and display");
     }
 
     @Test
