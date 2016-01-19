@@ -12,8 +12,8 @@ public class MultiJMXOptions {
     private boolean orderDisplay;
     private boolean reverseOrder;
     private Integer maxThreads;
-    private ObjectName objectName;
-    private String attribute;
+    private List<ObjectName> objectNames;
+    private List<String> attributes;
     private String username;
     private String password;
     private List<JMXConnection> urls;
@@ -58,20 +58,20 @@ public class MultiJMXOptions {
         this.maxThreads = maxThreads;
     }
 
-    public ObjectName getObjectName() {
-        return objectName;
+    public List<ObjectName> getObjectNames() {
+        return objectNames;
     }
 
-    public void setObjectName(ObjectName objectName) {
-        this.objectName = objectName;
+    public void setObjectNames(List<ObjectName> objectNames) {
+        this.objectNames = objectNames;
     }
 
-    public String getAttribute() {
-        return attribute;
+    public List<String> getAttributes() {
+        return attributes;
     }
 
-    public void setAttribute(String attribute) {
-        this.attribute = attribute;
+    public void setAttributes(List<String> attributes) {
+        this.attributes = attributes;
     }
 
     public String getUsername() {

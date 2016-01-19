@@ -31,7 +31,8 @@ public class DisplayComparatorComparatorTest {
         JMXResponse response = createResponse(1);
         JMXResponse response2 = createResponse(2);
         JMXResponse response3 = createResponse(3);
-        Assert.assertEquals(Arrays.asList(response, response2, response3), Arrays.asList(response, response2, response3).stream().sorted(victim).collect(Collectors.toList()));
+        Assert.assertEquals(Arrays.asList(response, response2, response3),
+                Arrays.asList(response, response2, response3).stream().sorted(victim).collect(Collectors.toList()));
     }
 
     @Test
@@ -40,7 +41,28 @@ public class DisplayComparatorComparatorTest {
         JMXResponse response2 = createResponse(2);
         JMXResponse response3 = createResponse(3);
 
-        Assert.assertEquals(Arrays.asList(response, response2, response3), Arrays.asList(response3, response2, response).stream().sorted(victim).collect(Collectors.toList()));
+        Assert.assertEquals(Arrays.asList(response, response2, response3),
+                Arrays.asList(response3, response2, response).stream().sorted(victim).collect(Collectors.toList()));
+    }
+
+    @Test
+    public void testShouldReturnValuesInOrderWhenUsingValueComparatorNotInOrderMultipleValues() throws Exception {
+        JMXResponse response = createResponse(1, 1);
+        JMXResponse response2 = createResponse(2, 2);
+        JMXResponse response3 = createResponse(3, 3);
+
+        Assert.assertEquals(Arrays.asList(response, response2, response3),
+                Arrays.asList(response3, response2, response).stream().sorted(victim).collect(Collectors.toList()));
+    }
+
+    @Test
+    public void testShouldReturnValuesInOrderWhenUsingValueComparatorNotInOrderMultipleValuesWithSameFirst() throws Exception {
+        JMXResponse response = createResponse(1, 1);
+        JMXResponse response2 = createResponse(1, 2);
+        JMXResponse response3 = createResponse(2, 3);
+
+        Assert.assertEquals(Arrays.asList(response, response2, response3),
+                Arrays.asList(response3, response2, response).stream().sorted(victim).collect(Collectors.toList()));
     }
 
     @Test
@@ -50,7 +72,8 @@ public class DisplayComparatorComparatorTest {
         JMXResponse response3 = createResponse(3);
         JMXResponse error1 = createErrorResponse();
 
-        Assert.assertEquals(Arrays.asList(error1, response, response2, response3), Arrays.asList(response3, response2, response, error1).stream().sorted(victim).collect(Collectors.toList()));
+        Assert.assertEquals(Arrays.asList(error1, response, response2, response3),
+                Arrays.asList(response3, response2, response, error1).stream().sorted(victim).collect(Collectors.toList()));
     }
 
     @Test
@@ -60,11 +83,12 @@ public class DisplayComparatorComparatorTest {
         JMXResponse response3 = createResponse(3);
         JMXResponse error1 = createErrorResponse();
 
-        Assert.assertEquals(Arrays.asList(error1, response, response2, response3), Arrays.asList(response3, response2, response, error1).stream().sorted(victim.reversed()).collect(Collectors.toList()));
+        Assert.assertEquals(Arrays.asList(error1, response, response2, response3),
+                Arrays.asList(response3, response2, response, error1).stream().sorted(victim.reversed()).collect(Collectors.toList()));
     }
 
-    private JMXResponse createResponse(int order) {
-        return new JMXResponse("display" + displayCountChar++, order);
+    private JMXResponse createResponse(Comparable... order) {
+        return new JMXResponse("display" + displayCountChar++, Arrays.asList(order));
     }
 
     private JMXResponse createErrorResponse() {

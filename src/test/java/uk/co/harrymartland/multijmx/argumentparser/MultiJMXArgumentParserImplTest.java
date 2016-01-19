@@ -10,6 +10,8 @@ import uk.co.harrymartland.multijmx.domain.connection.JMXConnection;
 import javax.management.ObjectName;
 import javax.management.remote.JMXServiceURL;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class MultiJMXArgumentParserImplTest {
 
@@ -20,15 +22,29 @@ public class MultiJMXArgumentParserImplTest {
     @org.junit.Test
     public void testShouldRequireObjectNameAndAttributeShortName() throws Exception {
         MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(arguments("-o " + VALID_OBJECT_NAME + " -a attribute"));
-        Assert.assertEquals(new ObjectName(VALID_OBJECT_NAME), multiJMXOptions.getObjectName());
-        Assert.assertEquals("attribute", multiJMXOptions.getAttribute());
+        Assert.assertEquals(Collections.singletonList(new ObjectName(VALID_OBJECT_NAME)), multiJMXOptions.getObjectNames());
+        Assert.assertEquals(Collections.singletonList("attribute"), multiJMXOptions.getAttributes());
+    }
+
+    @org.junit.Test
+    public void testShouldReturnMultipleAttributesAndObjectsShortName() throws Exception {
+        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(arguments("-o " + VALID_OBJECT_NAME + " -a attribute -o " + VALID_OBJECT_NAME + " -a attribute -o " + VALID_OBJECT_NAME + " -a attribute"));
+        Assert.assertEquals(Arrays.asList(new ObjectName(VALID_OBJECT_NAME), new ObjectName(VALID_OBJECT_NAME), new ObjectName(VALID_OBJECT_NAME)), multiJMXOptions.getObjectNames());
+        Assert.assertEquals(Arrays.asList("attribute", "attribute", "attribute"), multiJMXOptions.getAttributes());
+    }
+
+    @org.junit.Test
+    public void testShouldReturnMultipleAttributesAndObjectsLongName() throws Exception {
+        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(arguments("-object-name " + VALID_OBJECT_NAME + " -attribute attribute -object-name " + VALID_OBJECT_NAME + " -attribute attribute -object-name " + VALID_OBJECT_NAME + " -attribute attribute"));
+        Assert.assertEquals(Arrays.asList(new ObjectName(VALID_OBJECT_NAME), new ObjectName(VALID_OBJECT_NAME), new ObjectName(VALID_OBJECT_NAME)), multiJMXOptions.getObjectNames());
+        Assert.assertEquals(Arrays.asList("attribute", "attribute", "attribute"), multiJMXOptions.getAttributes());
     }
 
     @org.junit.Test
     public void testShouldRequireObjectNameAndAttributeLongName() throws Exception {
         MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(arguments("-object-name " + VALID_OBJECT_NAME + " -attribute attribute"));
-        Assert.assertEquals(new ObjectName(VALID_OBJECT_NAME), multiJMXOptions.getObjectName());
-        Assert.assertEquals("attribute", multiJMXOptions.getAttribute());
+        Assert.assertEquals(Collections.singletonList(new ObjectName(VALID_OBJECT_NAME)), multiJMXOptions.getObjectNames());
+        Assert.assertEquals(Collections.singletonList("attribute"), multiJMXOptions.getAttributes());
     }
 
     @org.junit.Test(expected = ParseException.class)

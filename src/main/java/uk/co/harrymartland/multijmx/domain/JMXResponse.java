@@ -2,22 +2,25 @@ package uk.co.harrymartland.multijmx.domain;
 
 import org.apache.commons.lang3.ObjectUtils;
 
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 
 public class JMXResponse {
 
     private String display;
-    private Comparable value;
+    private List<Comparable> values;
     private Exception exception;
     private boolean isError = false;
 
-    public JMXResponse(String display, Comparable value) {
+    public JMXResponse(String display, List<Comparable> values) {
         this.display = display;
-        this.value = value;
+        this.values = values;
     }
 
     public JMXResponse(String display, Exception exception) {
-        this(display, exception.getMessage());
+        this(display, Collections.singletonList(exception.getMessage()));
         this.exception = exception;
         this.isError = true;
     }
@@ -26,8 +29,8 @@ public class JMXResponse {
         return display;
     }
 
-    public Comparable getValue() {
-        return value;
+    public List<Comparable> getValues() {
+        return values;
     }
 
     public Exception getException() {
@@ -42,7 +45,7 @@ public class JMXResponse {
     public String toString() {
         return "JMXResponse{" +
                 "display='" + display + '\'' +
-                ", value=" + value +
+                ", values=" + values +
                 ", exception=" + exception +
                 ", isError=" + isError +
                 '}';
@@ -79,7 +82,17 @@ public class JMXResponse {
     public static class ValueComparator extends AbstractComparator {
         @Override
         public int doCompare(JMXResponse o1, JMXResponse o2) {
-            return ObjectUtils.compare(o1.getValue(), o2.getValue());
+            Iterator<Comparable> iterator1 = o1.getValues().iterator();
+            Iterator<Comparable> iterator2 = o2.getValues().iterator();
+
+            while (iterator1.hasNext() && iterator2.hasNext()) {
+                int compare = ObjectUtils.compare(iterator1.next(), iterator2.next());
+                if (compare != 0) {
+                    return compare;
+                }
+            }
+
+            return 0;
         }
     }
 

@@ -15,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParser.HELP_LONG_OPTION;
@@ -34,7 +35,7 @@ public class Main {
         }
         if (args.length > 0) {
             List<JMXResponse> errors = multiJMXProcessor.run(multiJMXOptionValidator.validate(multiJMXArgumentParser.parseArguments(args)))
-                    .peek(this::display)
+                    .peek(jmxResponse -> display(jmxResponse, "\t"))
                     .filter(JMXResponse::isError)
                     .collect(Collectors.toList());
 
@@ -66,12 +67,12 @@ public class Main {
     }
 
 
-    private void display(JMXResponse jmxResponse) {
-        System.out.print(jmxResponse.getDisplay() + "\t");
+    private void display(JMXResponse jmxResponse, String delimiter) {//todo use arg for delimiter
+        System.out.print(jmxResponse.getDisplay() + delimiter);
         if (jmxResponse.isError()) {
             System.out.println("ERROR (" + jmxResponse.getException().getMessage() + ")");
         } else {
-            System.out.println(jmxResponse.getValue());
+            System.out.println(jmxResponse.getValues().stream().map(Objects::toString).collect(Collectors.joining(delimiter)));
         }
     }
 

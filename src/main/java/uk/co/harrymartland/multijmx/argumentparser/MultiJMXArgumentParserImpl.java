@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -29,18 +30,21 @@ public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
         CommandLine cmd = new DefaultParser().parse(getOptions(), args);
         MultiJMXOptions multiJMXOptions = new MultiJMXOptions();
 
-        multiJMXOptions.setAttribute(cmd.getOptionValue("a"));
+        multiJMXOptions.setAttributes(Arrays.asList(cmd.getOptionValues("a")));
         multiJMXOptions.setMaxThreads(getMaxThreads(cmd));
-        multiJMXOptions.setObjectName(createObjectName(cmd.getOptionValue("o")));
+        multiJMXOptions.setObjectNames(createObjectNames(cmd.getOptionValues("o")));
         multiJMXOptions.setOrderDisplay(cmd.hasOption("d"));
         multiJMXOptions.setOrderValue(cmd.hasOption("v"));
         multiJMXOptions.setReverseOrder(cmd.hasOption("r"));
-        multiJMXOptions.setAttribute(cmd.getOptionValue("a"));
         multiJMXOptions.setPassword(cmd.getOptionValue("p"));
         multiJMXOptions.setUsername(cmd.getOptionValue("u"));
         multiJMXOptions.setUrls(createConnections(cmd));
 
         return multiJMXOptions;
+    }
+
+    private List<ObjectName> createObjectNames(String[] options) {
+        return Arrays.asList(options).stream().map(this::createObjectName).collect(Collectors.toList());
     }
 
     private List<JMXConnection> createConnections(CommandLine cmd) {

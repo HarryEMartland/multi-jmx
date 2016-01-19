@@ -5,6 +5,7 @@ import uk.co.harrymartland.multijmx.domain.connection.JMXConnection;
 import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PasswordJmxRunner extends RemoteJmxRunner {
@@ -12,8 +13,8 @@ public class PasswordJmxRunner extends RemoteJmxRunner {
     private final String username;
     private final String password;
 
-    public PasswordJmxRunner(ObjectName objectName, String attribute, JMXConnection jmxConnection, String username, String password) {
-        super(objectName, attribute, jmxConnection);
+    public PasswordJmxRunner(List<ObjectName> objectNames, List<String> attributes, JMXConnection jmxConnection, String username, String password) {
+        super(objectNames, attributes, jmxConnection);
         this.username = username;
         this.password = password;
     }

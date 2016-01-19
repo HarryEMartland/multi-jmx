@@ -84,9 +84,9 @@ public class MultiJMXProcessorImpl implements MultiJAEProcessor {
 
     private RemoteJmxRunner createJmxRunner(MultiJMXOptions options, JMXConnection connection) {
         if (options.isAuthenticationRequired()) {
-            return new PasswordJmxRunner(options.getObjectName(), options.getAttribute(), connection, options.getUsername(), options.getPassword());
+            return new PasswordJmxRunner(options.getObjectNames(), options.getAttributes(), connection, options.getUsername(), options.getPassword());
         } else {
-            return new RemoteJmxRunner(options.getObjectName(), options.getAttribute(), connection);
+            return new RemoteJmxRunner(options.getObjectNames(), options.getAttributes(), connection);
         }
     }
 }
