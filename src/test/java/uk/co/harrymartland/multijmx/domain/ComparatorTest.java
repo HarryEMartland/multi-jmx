@@ -11,35 +11,35 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RunWith(Parameterized.class)
-public class DisplayComparatorComparatorTest {
+public class ComparatorTest {
 
     private static char displayCountChar = 0;
 
-    public Comparator<JMXResponse> victim;
+    public Comparator<JMXConnectionResponse> victim;
 
-    public DisplayComparatorComparatorTest(Class<Comparator<JMXResponse>> comparatorClass) throws IllegalAccessException, InstantiationException {
+    public ComparatorTest(Class<Comparator<JMXConnectionResponse>> comparatorClass) throws IllegalAccessException, InstantiationException {
         victim = comparatorClass.newInstance();
     }
 
     @Parameterized.Parameters
-    public static List<Class<? extends Comparator<JMXResponse>>> parameters() {
-        return Arrays.asList(JMXResponse.DisplayComparator.class, JMXResponse.ValueComparator.class);
+    public static List<Class<? extends Comparator<JMXConnectionResponse>>> parameters() {
+        return Arrays.asList(JMXConnectionResponse.DisplayComparator.class, JMXConnectionResponse.ValueComparator.class);
     }
 
     @Test
     public void testShouldReturnValuesInOrderWhenUsingValueComparator() throws Exception {
-        JMXResponse response = createResponse(1);
-        JMXResponse response2 = createResponse(2);
-        JMXResponse response3 = createResponse(3);
+        JMXConnectionResponse response = createResponse(1);
+        JMXConnectionResponse response2 = createResponse(2);
+        JMXConnectionResponse response3 = createResponse(3);
         Assert.assertEquals(Arrays.asList(response, response2, response3),
                 Arrays.asList(response, response2, response3).stream().sorted(victim).collect(Collectors.toList()));
     }
 
     @Test
     public void testShouldReturnValuesInOrderWhenUsingValueComparatorNotInOrder() throws Exception {
-        JMXResponse response = createResponse(1);
-        JMXResponse response2 = createResponse(2);
-        JMXResponse response3 = createResponse(3);
+        JMXConnectionResponse response = createResponse(1);
+        JMXConnectionResponse response2 = createResponse(2);
+        JMXConnectionResponse response3 = createResponse(3);
 
         Assert.assertEquals(Arrays.asList(response, response2, response3),
                 Arrays.asList(response3, response2, response).stream().sorted(victim).collect(Collectors.toList()));
@@ -47,9 +47,9 @@ public class DisplayComparatorComparatorTest {
 
     @Test
     public void testShouldReturnValuesInOrderWhenUsingValueComparatorNotInOrderMultipleValues() throws Exception {
-        JMXResponse response = createResponse(1, 1);
-        JMXResponse response2 = createResponse(2, 2);
-        JMXResponse response3 = createResponse(3, 3);
+        JMXConnectionResponse response = createResponse(1, 1);
+        JMXConnectionResponse response2 = createResponse(2, 2);
+        JMXConnectionResponse response3 = createResponse(3, 3);
 
         Assert.assertEquals(Arrays.asList(response, response2, response3),
                 Arrays.asList(response3, response2, response).stream().sorted(victim).collect(Collectors.toList()));
@@ -57,9 +57,9 @@ public class DisplayComparatorComparatorTest {
 
     @Test
     public void testShouldReturnValuesInOrderWhenUsingValueComparatorNotInOrderMultipleValuesWithSameFirst() throws Exception {
-        JMXResponse response = createResponse(1, 1);
-        JMXResponse response2 = createResponse(1, 2);
-        JMXResponse response3 = createResponse(2, 3);
+        JMXConnectionResponse response = createResponse(1, 1);
+        JMXConnectionResponse response2 = createResponse(1, 2);
+        JMXConnectionResponse response3 = createResponse(2, 3);
 
         Assert.assertEquals(Arrays.asList(response, response2, response3),
                 Arrays.asList(response3, response2, response).stream().sorted(victim).collect(Collectors.toList()));
@@ -67,10 +67,10 @@ public class DisplayComparatorComparatorTest {
 
     @Test
     public void testShouldReturnValuesInOrderWhenUsingValueComparatorNotInOrderAndWithException() throws Exception {
-        JMXResponse response = createResponse(1);
-        JMXResponse response2 = createResponse(2);
-        JMXResponse response3 = createResponse(3);
-        JMXResponse error1 = createErrorResponse();
+        JMXConnectionResponse response = createResponse(1);
+        JMXConnectionResponse response2 = createResponse(2);
+        JMXConnectionResponse response3 = createResponse(3);
+        JMXConnectionResponse error1 = createErrorResponse();
 
         Assert.assertEquals(Arrays.asList(error1, response, response2, response3),
                 Arrays.asList(response3, response2, response, error1).stream().sorted(victim).collect(Collectors.toList()));
@@ -78,21 +78,22 @@ public class DisplayComparatorComparatorTest {
 
     @Test
     public void testShouldReturnValuesInOrderWhenUsingValueComparatorNotInOrderAndWithExceptionReversed() throws Exception {
-        JMXResponse response = createResponse(1);
-        JMXResponse response2 = createResponse(2);
-        JMXResponse response3 = createResponse(3);
-        JMXResponse error1 = createErrorResponse();
+        JMXConnectionResponse response = createResponse(1);
+        JMXConnectionResponse response2 = createResponse(2);
+        JMXConnectionResponse response3 = createResponse(3);
+        JMXConnectionResponse error1 = createErrorResponse();
 
-        Assert.assertEquals(Arrays.asList(error1, response, response2, response3),
+        Assert.assertEquals(Arrays.asList(error1, response3, response2, response),
                 Arrays.asList(response3, response2, response, error1).stream().sorted(victim.reversed()).collect(Collectors.toList()));
     }
 
-    private JMXResponse createResponse(Comparable... order) {
-        return new JMXResponse("display" + displayCountChar++, Arrays.asList(order));
+    private JMXConnectionResponse createResponse(Comparable... order) {
+        return new JMXConnectionResponse("display" + displayCountChar++,
+                Arrays.asList(order).stream().map(JMXValueResult::new).collect(Collectors.toList()));
     }
 
-    private JMXResponse createErrorResponse() {
-        return new JMXResponse("display" + displayCountChar++, new Exception());
+    private JMXConnectionResponse createErrorResponse() {
+        return new JMXConnectionResponse("display" + displayCountChar++, new Exception());
     }
 
 }

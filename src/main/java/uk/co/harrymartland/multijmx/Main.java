@@ -4,7 +4,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.ParseException;
 import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParser;
 import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParserImpl;
-import uk.co.harrymartland.multijmx.domain.JMXResponse;
+import uk.co.harrymartland.multijmx.domain.JMXConnectionResponse;
 import uk.co.harrymartland.multijmx.domain.MultiJMXOptions;
 import uk.co.harrymartland.multijmx.processer.MultiJAEProcessor;
 import uk.co.harrymartland.multijmx.processer.MultiJMXProcessorImpl;
@@ -36,9 +36,9 @@ public class Main {
         }
         if (args.length > 0) {
             MultiJMXOptions jmxOptions = multiJMXOptionValidator.validate(multiJMXArgumentParser.parseArguments(args));
-            List<JMXResponse> errors = multiJMXProcessor.run(jmxOptions)
+            List<JMXConnectionResponse> errors = multiJMXProcessor.run(jmxOptions)
                     .peek(jmxResponse -> display(jmxResponse, jmxOptions.getDelimiter()))
-                    .filter(JMXResponse::isError)
+                    .filter(JMXConnectionResponse::isError)
                     .collect(Collectors.toList());
 
             if (!errors.isEmpty()) {
@@ -48,14 +48,15 @@ public class Main {
         }
     }
 
-    private void displayErrors(List<JMXResponse> errors) {
+    //todo output value errors
+    private void displayErrors(List<JMXConnectionResponse> errors) {
         BufferedReader reader = null;
         InputStreamReader inputStream = null;
         try {
             System.out.println("errors have occurred (" + errors.size() + ")");
             inputStream = new InputStreamReader(System.in);
             reader = new BufferedReader(inputStream);
-            for (JMXResponse error : errors) {
+            for (JMXConnectionResponse error : errors) {
                 System.out.println("Press enter to see next stack trace");
                 reader.readLine();
                 error.getException().printStackTrace();
@@ -69,12 +70,12 @@ public class Main {
     }
 
 
-    private void display(JMXResponse jmxResponse, String delimiter) {
-        System.out.print(jmxResponse.getDisplay() + delimiter);
-        if (jmxResponse.isError()) {
-            System.out.println("ERROR (" + jmxResponse.getException().getMessage() + ")");
+    private void display(JMXConnectionResponse jmxConnectionResponse, String delimiter) {
+        System.out.print(jmxConnectionResponse.getDisplay() + delimiter);
+        if (jmxConnectionResponse.isError()) {
+            System.out.println("ERROR (" + jmxConnectionResponse.getException().getMessage() + ")");
         } else {
-            System.out.println(jmxResponse.getValues().stream().map(Objects::toString).collect(Collectors.joining(delimiter)));
+            System.out.println(jmxConnectionResponse.getValue().stream().map(Objects::toString).collect(Collectors.joining(delimiter)));
         }
     }
 

@@ -1,6 +1,6 @@
 package uk.co.harrymartland.multijmx.processer;
 
-import uk.co.harrymartland.multijmx.domain.JMXResponse;
+import uk.co.harrymartland.multijmx.domain.JMXConnectionResponse;
 import uk.co.harrymartland.multijmx.domain.MultiJMXOptions;
 import uk.co.harrymartland.multijmx.domain.connection.JMXConnection;
 import uk.co.harrymartland.multijmx.jmxrunner.PasswordJmxRunner;
@@ -18,12 +18,12 @@ public class MultiJMXProcessorImpl implements MultiJAEProcessor {
 
 
     @Override
-    public Stream<JMXResponse> run(MultiJMXOptions multiJMXOptions) {
+    public Stream<JMXConnectionResponse> run(MultiJMXOptions multiJMXOptions) {
         ExecutorService executorService = null;
 
         try {
             final ExecutorService finalExecutorService = executorService = createExecutorService(multiJMXOptions);
-            Stream<JMXResponse> objectStream = multiJMXOptions.getUrls().stream()
+            Stream<JMXConnectionResponse> objectStream = multiJMXOptions.getUrls().stream()
                     .map(connection -> requestObject(finalExecutorService, multiJMXOptions, connection))
                     .collect(Collectors.toList())
                     .stream()
@@ -37,15 +37,15 @@ public class MultiJMXProcessorImpl implements MultiJAEProcessor {
         }
     }
 
-    private Stream<JMXResponse> sort(Stream<JMXResponse> objectStream, MultiJMXOptions multiJMXOptions) {
+    private Stream<JMXConnectionResponse> sort(Stream<JMXConnectionResponse> objectStream, MultiJMXOptions multiJMXOptions) {
         if (multiJMXOptions.isOrdered()) {
-            Comparator<JMXResponse> comparator = null;
+            Comparator<JMXConnectionResponse> comparator = null;
 
             if (multiJMXOptions.isOrderConnection()) {
-                comparator = new JMXResponse.DisplayComparator();
+                comparator = new JMXConnectionResponse.DisplayComparator();
             }
             if (multiJMXOptions.isOrderValue()) {
-                comparator = new JMXResponse.ValueComparator();
+                comparator = new JMXConnectionResponse.ValueComparator();
             }
 
             if (comparator != null) {
@@ -55,7 +55,7 @@ public class MultiJMXProcessorImpl implements MultiJAEProcessor {
         return objectStream;
     }
 
-    private Comparator<JMXResponse> reverseComparator(Comparator<JMXResponse> comparator, boolean reverse) {
+    private Comparator<JMXConnectionResponse> reverseComparator(Comparator<JMXConnectionResponse> comparator, boolean reverse) {
         if (reverse) {
             comparator = comparator.reversed();
         }
@@ -78,7 +78,7 @@ public class MultiJMXProcessorImpl implements MultiJAEProcessor {
         }
     }
 
-    private Future<JMXResponse> requestObject(ExecutorService executorService, MultiJMXOptions options, JMXConnection connection) {
+    private Future<JMXConnectionResponse> requestObject(ExecutorService executorService, MultiJMXOptions options, JMXConnection connection) {
         return executorService.submit(createJmxRunner(options, connection));
     }
 
