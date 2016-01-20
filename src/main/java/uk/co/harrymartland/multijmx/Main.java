@@ -64,8 +64,7 @@ public class Main {
         } catch (IOException e) {
             ExceptionUtils.eat(e);
         } finally {
-            ExceptionUtils.closeQuietly(reader);
-            ExceptionUtils.closeQuietly(inputStream);
+            ExceptionUtils.closeQuietly(reader, inputStream);
         }
     }
 

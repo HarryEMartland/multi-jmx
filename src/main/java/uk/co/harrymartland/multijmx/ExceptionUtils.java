@@ -2,8 +2,13 @@ package uk.co.harrymartland.multijmx;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class ExceptionUtils {
+
+    public static void closeQuietly(Closeable... closeables) {
+        Arrays.asList(closeables).forEach(ExceptionUtils::closeQuietly);
+    }
 
     public static void closeQuietly(Closeable closeable) {
         if (closeable != null) {
