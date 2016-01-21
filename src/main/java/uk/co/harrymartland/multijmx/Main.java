@@ -2,6 +2,8 @@ package uk.co.harrymartland.multijmx;
 
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.ParseException;
+import uk.co.harrymartland.multijmx.Writer.SystemOutWriter;
+import uk.co.harrymartland.multijmx.Writer.Writer;
 import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParser;
 import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParserImpl;
 import uk.co.harrymartland.multijmx.domain.JMXConnectionResponse;
@@ -12,10 +14,9 @@ import uk.co.harrymartland.multijmx.processer.MultiJMXProcessorImpl;
 import uk.co.harrymartland.multijmx.validator.MultiJMXOptionValidator;
 import uk.co.harrymartland.multijmx.validator.MultiJMXOptionValidatorImpl;
 import uk.co.harrymartland.multijmx.validator.ValidationException;
+import uk.co.harrymartland.multijmx.waitable.SystemWaitable;
+import uk.co.harrymartland.multijmx.waitable.Waitable;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -27,11 +28,18 @@ import static uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParser
 public class Main {
 
     public static void main(String[] args) throws ParseException, ValidationException {
-        new Main().run(new MultiJMXArgumentParserImpl(), new MultiJMXProcessorImpl(), new MultiJMXOptionValidatorImpl(), args);
+        SystemWaitable systemWaitable = null;
+        try {
+            systemWaitable = new SystemWaitable();
+            new Main().run(new MultiJMXArgumentParserImpl(), new MultiJMXProcessorImpl(),
+                    new MultiJMXOptionValidatorImpl(), new SystemOutWriter(), systemWaitable, args);
+        } finally {
+            ExceptionUtils.closeQuietly(systemWaitable);
+        }
     }
 
     public void run(MultiJMXArgumentParser multiJMXArgumentParser, MultiJAEProcessor multiJMXProcessor,
-                    MultiJMXOptionValidator multiJMXOptionValidator, String[] args) throws ParseException, ValidationException {
+                    MultiJMXOptionValidator multiJMXOptionValidator, Writer writer, Waitable waitable, String[] args) throws ParseException, ValidationException {
 
         if (isDisplayHelp(args)) {
             new HelpFormatter().printHelp("multi-jmx", multiJMXArgumentParser.getOptions(), true);
@@ -39,13 +47,13 @@ public class Main {
         if (args.length > 0) {
             MultiJMXOptions jmxOptions = multiJMXOptionValidator.validate(multiJMXArgumentParser.parseArguments(args));
             List<Exception> errors = multiJMXProcessor.run(jmxOptions)
-                    .peek(jmxResponse -> display(jmxResponse, jmxOptions.getDelimiter()))
+                    .peek(jmxResponse -> display(jmxResponse, jmxOptions.getDelimiter(), writer))
                     .flatMap(this::getExceptions)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
 
             if (!errors.isEmpty()) {
-                displayErrors(errors);
+                displayErrors(errors, writer, waitable);
             }
         }
     }
@@ -54,32 +62,22 @@ public class Main {
         return Stream.concat(Stream.of(jmxConnectionResponse.getException()), jmxConnectionResponse.getValue().stream().map(JMXValueResult::getException));
     }
 
-    private void displayErrors(List<Exception> errors) {
-        BufferedReader reader = null;
-        InputStreamReader inputStream = null;
-        try {
-            System.out.println("errors have occurred (" + errors.size() + ")");
-            inputStream = new InputStreamReader(System.in);
-            reader = new BufferedReader(inputStream);
-            for (Exception error : errors) {
-                System.out.println("Press enter to see next stack trace");
-                reader.readLine();
-                error.printStackTrace();
-            }
-        } catch (IOException e) {
-            ExceptionUtils.eat(e);
-        } finally {
-            ExceptionUtils.closeQuietly(reader, inputStream);
+    private void displayErrors(List<Exception> errors, Writer writer, Waitable waitable) {
+        writer.writeLine("errors have occurred (" + errors.size() + ")");
+        for (Exception error : errors) {
+            writer.writeLine("Press enter to see next stack trace");
+            waitable.await();
+            error.printStackTrace();
         }
     }
 
 
-    private void display(JMXConnectionResponse jmxConnectionResponse, String delimiter) {
-        System.out.print(jmxConnectionResponse.getDisplay() + delimiter);
+    private void display(JMXConnectionResponse jmxConnectionResponse, String delimiter, Writer writer) {
+        writer.writeLine(jmxConnectionResponse.getDisplay() + delimiter);
         if (jmxConnectionResponse.isError()) {
-            System.out.println("ERROR (" + jmxConnectionResponse.getException().getMessage() + ")");
+            writer.writeLine("ERROR (" + jmxConnectionResponse.getException().getMessage() + ")");
         } else {
-            System.out.println(jmxConnectionResponse.getValue().stream().map(this::display).collect(Collectors.joining(delimiter)));
+            writer.writeLine(jmxConnectionResponse.getValue().stream().map(this::display).collect(Collectors.joining(delimiter)));
         }
     }
 
