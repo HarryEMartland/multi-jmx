@@ -63,22 +63,24 @@ public class Main {
     }
 
     private void displayErrors(List<Exception> errors, Writer writer, Waitable waitable) {
-        writer.writeLine("errors have occurred (" + errors.size() + ")");
+        writer.writeLine("Errors have occurred (" + errors.size() + ")");
         for (Exception error : errors) {
             writer.writeLine("Press enter to see next stack trace");
             waitable.await();
-            error.printStackTrace();
+            writer.writeLine(ExceptionUtils.getStackTrace(error));
         }
     }
 
 
     private void display(JMXConnectionResponse jmxConnectionResponse, String delimiter, Writer writer) {
-        writer.writeLine(jmxConnectionResponse.getDisplay() + delimiter);
+        String value;
         if (jmxConnectionResponse.isError()) {
-            writer.writeLine("ERROR (" + jmxConnectionResponse.getException().getMessage() + ")");
+            value = "ERROR (" + jmxConnectionResponse.getException().getMessage() + ")";
         } else {
-            writer.writeLine(jmxConnectionResponse.getValue().stream().map(this::display).collect(Collectors.joining(delimiter)));
+            value = jmxConnectionResponse.getValue().stream().map(this::display).collect(Collectors.joining(delimiter));
         }
+        writer.writeLine(jmxConnectionResponse.getDisplay() + delimiter + value);
+
     }
 
     private String display(JMXValueResult jmxValueResult) {
