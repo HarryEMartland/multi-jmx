@@ -5,6 +5,7 @@ import org.apache.commons.cli.ParseException;
 import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParser;
 import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParserImpl;
 import uk.co.harrymartland.multijmx.domain.JMXConnectionResponse;
+import uk.co.harrymartland.multijmx.domain.JMXValueResult;
 import uk.co.harrymartland.multijmx.domain.MultiJMXOptions;
 import uk.co.harrymartland.multijmx.processer.MultiJAEProcessor;
 import uk.co.harrymartland.multijmx.processer.MultiJMXProcessorImpl;
@@ -18,6 +19,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParser.HELP_LONG_OPTION;
 import static uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParser.HELP_SHORT_OPTION;
@@ -36,30 +38,33 @@ public class Main {
         }
         if (args.length > 0) {
             MultiJMXOptions jmxOptions = multiJMXOptionValidator.validate(multiJMXArgumentParser.parseArguments(args));
-            List<JMXConnectionResponse> errors = multiJMXProcessor.run(jmxOptions)
+            List<Exception> errors = multiJMXProcessor.run(jmxOptions)
                     .peek(jmxResponse -> display(jmxResponse, jmxOptions.getDelimiter()))
-                    .filter(JMXConnectionResponse::isError)
+                    .flatMap(this::getExceptions)
+                    .filter(Objects::nonNull)
                     .collect(Collectors.toList());
 
             if (!errors.isEmpty()) {
-
                 displayErrors(errors);
             }
         }
     }
 
-    //todo output value errors
-    private void displayErrors(List<JMXConnectionResponse> errors) {
+    private Stream<? extends Exception> getExceptions(JMXConnectionResponse jmxConnectionResponse) {
+        return Stream.concat(Stream.of(jmxConnectionResponse.getException()), jmxConnectionResponse.getValue().stream().map(JMXValueResult::getException));
+    }
+
+    private void displayErrors(List<Exception> errors) {
         BufferedReader reader = null;
         InputStreamReader inputStream = null;
         try {
             System.out.println("errors have occurred (" + errors.size() + ")");
             inputStream = new InputStreamReader(System.in);
             reader = new BufferedReader(inputStream);
-            for (JMXConnectionResponse error : errors) {
+            for (Exception error : errors) {
                 System.out.println("Press enter to see next stack trace");
                 reader.readLine();
-                error.getException().printStackTrace();
+                error.printStackTrace();
             }
         } catch (IOException e) {
             ExceptionUtils.eat(e);
@@ -74,7 +79,15 @@ public class Main {
         if (jmxConnectionResponse.isError()) {
             System.out.println("ERROR (" + jmxConnectionResponse.getException().getMessage() + ")");
         } else {
-            System.out.println(jmxConnectionResponse.getValue().stream().map(Objects::toString).collect(Collectors.joining(delimiter)));
+            System.out.println(jmxConnectionResponse.getValue().stream().map(this::display).collect(Collectors.joining(delimiter)));
+        }
+    }
+
+    private String display(JMXValueResult jmxValueResult) {
+        if (jmxValueResult.isError()) {
+            return jmxValueResult.getException().getMessage();
+        } else {
+            return jmxValueResult.getValue().toString();
         }
     }
 
@@ -93,7 +106,6 @@ public class Main {
 
     private boolean isHelpOption(String arg) {
         return arg.equalsIgnoreCase("-" + HELP_SHORT_OPTION) || arg.equalsIgnoreCase("-" + HELP_LONG_OPTION);
-
     }
 
 }
