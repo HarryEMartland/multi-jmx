@@ -1,25 +1,25 @@
 package uk.co.harrymartland.multijmx.validator;
 
-import uk.co.harrymartland.multijmx.domain.MultiJMXOptions;
+import org.apache.commons.cli.CommandLine;
 
 public class MultiJMXOptionValidatorImpl implements MultiJMXOptionValidator {
     @Override
-    public MultiJMXOptions validate(MultiJMXOptions multiJMXOptions) throws ValidationException {
-        validateOrder(multiJMXOptions);
-        validateObjectsAndAttributes(multiJMXOptions);
-        return multiJMXOptions;
+    public CommandLine validate(CommandLine commandLine) throws ValidationException {
+        validateOrder(commandLine);
+        validateObjectsAndAttributes(commandLine);//todo validate methods and implement methods
+        return commandLine;
     }
 
-    private void validateObjectsAndAttributes(MultiJMXOptions multiJMXOptions) throws ValidationException {
-        if (multiJMXOptions.getObjectNames().size() > 1) {
-            if (multiJMXOptions.getObjectNames().size() != multiJMXOptions.getAttributes().size()) {
+    private void validateObjectsAndAttributes(CommandLine commandLine) throws ValidationException {
+        if (commandLine.getOptionValues("o").length > 1) {
+            if (commandLine.getOptionValues("o").length != commandLine.getOptionValues("a").length) {
                 throw new ValidationException("Number of attributes and objects must match");
             }
         }
     }
 
-    private void validateOrder(MultiJMXOptions multiJMXOptions) throws ValidationException {
-        if (multiJMXOptions.isOrderConnection() && multiJMXOptions.isOrderValue()) {
+    private void validateOrder(CommandLine commandLine) throws ValidationException {
+        if (commandLine.hasOption("c") && commandLine.hasOption("v")) {
             throw new ValidationException("Cannot order by connection and display");
         }
     }

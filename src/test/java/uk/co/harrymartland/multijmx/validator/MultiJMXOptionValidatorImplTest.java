@@ -1,92 +1,66 @@
 package uk.co.harrymartland.multijmx.validator;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.ParseException;
 import org.junit.Assert;
 import org.junit.Test;
-import uk.co.harrymartland.multijmx.domain.MultiJMXOptions;
-
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParser;
+import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParserImpl;
 
 public class MultiJMXOptionValidatorImplTest {
 
     private final String VALID_OBJECT_NAME = "java.lang:type=OperatingSystem";
 
     private MultiJMXOptionValidator multiJMXOptionValidator = new MultiJMXOptionValidatorImpl();
+    private MultiJMXArgumentParser multiJMXArgumentParser = new MultiJMXArgumentParserImpl();
 
     @Test
     public void testShouldThrowExceptionWhenOrderByValueAndConnection() throws Exception {
-        MultiJMXOptions multiJMXOptions = new MultiJMXOptions();
-        multiJMXOptions.setOrderConnection(true);
-        multiJMXOptions.setOrderValue(true);
-        assertExceptionThrown(multiJMXOptions, "Cannot order by connection and display");
+        assertExceptionThrown(createCommandLine("-o", VALID_OBJECT_NAME, "-a", "att1", "-v", "-c"),
+                "Cannot order by connection and display");
     }
 
     @Test
     public void testShouldNotThrowExceptionWhenOneObjectAndMultipleAttributes() throws Exception {
-        MultiJMXOptions multiJMXOptions = new MultiJMXOptions();
-        multiJMXOptions.setObjectNames(createObjectNameList(VALID_OBJECT_NAME));
-        multiJMXOptions.setAttributes(Arrays.asList("att1", "att2", "att3"));
-        assertNoExceptionThrown(multiJMXOptions);
-        assertNoExceptionThrown(multiJMXOptions);
+        assertNoExceptionThrown(createCommandLine("-o", VALID_OBJECT_NAME, "-a", "att1", "-a", "att2", "-a", "att3"));
     }
 
     @Test
     public void testShouldNotThrowExceptionWhenSameNumberOfObjectsAndAttributes() throws Exception {
-        MultiJMXOptions multiJMXOptions = new MultiJMXOptions();
-        multiJMXOptions.setObjectNames(createObjectNameList(VALID_OBJECT_NAME, VALID_OBJECT_NAME, VALID_OBJECT_NAME));
-        multiJMXOptions.setAttributes(Arrays.asList("att1", "att2", "att3"));
-        assertNoExceptionThrown(multiJMXOptions);
+        assertNoExceptionThrown(createCommandLine("-a", "att1", "-a", "att3", "-a", "att2", "-o", VALID_OBJECT_NAME, "-o", VALID_OBJECT_NAME, "-o", VALID_OBJECT_NAME));
     }
 
     @Test
     public void testShouldThrowExceptionWhenMoreAttributesThanObjects() throws Exception {
-        MultiJMXOptions multiJMXOptions = new MultiJMXOptions();
-        multiJMXOptions.setObjectNames(createObjectNameList(VALID_OBJECT_NAME, VALID_OBJECT_NAME));
-        multiJMXOptions.setAttributes(Arrays.asList("att1", "att2", "att3"));
-        assertExceptionThrown(multiJMXOptions, "Number of attributes and objects must match");
+        assertExceptionThrown(createCommandLine("-a", "att1", "-a", "att1", "-a", "att1", "-o", VALID_OBJECT_NAME, "-o", VALID_OBJECT_NAME),
+                "Number of attributes and objects must match");
     }
 
     @Test
     public void testShouldThrowExceptionWhenMoreObjectsThanAttributes() throws Exception {
-        MultiJMXOptions multiJMXOptions = new MultiJMXOptions();
-        multiJMXOptions.setObjectNames(createObjectNameList(VALID_OBJECT_NAME, VALID_OBJECT_NAME, VALID_OBJECT_NAME));
-        multiJMXOptions.setAttributes(Arrays.asList("att1", "att2"));
-        assertExceptionThrown(multiJMXOptions, "Number of attributes and objects must match");
+        assertExceptionThrown(createCommandLine("-a", "att1", "-a", "att2", "-o", VALID_OBJECT_NAME, "-o", VALID_OBJECT_NAME, "-o", VALID_OBJECT_NAME),
+                "Number of attributes and objects must match");
     }
 
     @Test
-    public void testShouldNotThrowExceptionWithOneObjectAndOneAttribute() {
-        MultiJMXOptions multiJMXOptions = new MultiJMXOptions();
-        multiJMXOptions.setAttributes(Collections.singletonList("att"));
-        multiJMXOptions.setObjectNames(createObjectNameList(VALID_OBJECT_NAME));
-        assertNoExceptionThrown(multiJMXOptions);
+    public void testShouldNotThrowExceptionWithOneObjectAndOneAttribute() throws ParseException {
+        assertNoExceptionThrown(createCommandLine("-a", "att", "-o", VALID_OBJECT_NAME));
     }
 
-    private List<ObjectName> createObjectNameList(String... objectNames) {
-        return Arrays.asList(objectNames).stream().map(this::createObjectName).collect(Collectors.toList());
+    private CommandLine createCommandLine(String... args) throws ParseException {
+        return new DefaultParser().parse(multiJMXArgumentParser.getOptions(), args);
     }
 
-    private ObjectName createObjectName(String string) {
+    private void assertNoExceptionThrown(CommandLine commandLine) {
         try {
-            return ObjectName.getInstance(string);
-        } catch (MalformedObjectNameException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void assertNoExceptionThrown(MultiJMXOptions multiJMXOptions) {
-        try {
-            multiJMXOptionValidator.validate(multiJMXOptions);
+            multiJMXOptionValidator.validate(commandLine);
         } catch (ValidationException e) {
             Assert.fail(e.getMessage());
         }
     }
 
-    private void assertExceptionThrown(MultiJMXOptions multiJMXOptions, String message) {
+    private void assertExceptionThrown(CommandLine multiJMXOptions, String message) {
         try {
             multiJMXOptionValidator.validate(multiJMXOptions);
         } catch (ValidationException e) {

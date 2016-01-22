@@ -1,5 +1,7 @@
 package uk.co.harrymartland.multijmx;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.ParseException;
 import uk.co.harrymartland.multijmx.Writer.SystemOutWriter;
@@ -41,11 +43,14 @@ public class Main {
     public void run(MultiJMXArgumentParser multiJMXArgumentParser, MultiJAEProcessor multiJMXProcessor,
                     MultiJMXOptionValidator multiJMXOptionValidator, Writer writer, Waitable waitable, String[] args) throws ParseException, ValidationException {
 
+        CommandLine commandLine = new DefaultParser().parse(multiJMXArgumentParser.getOptions(), args);
+        multiJMXOptionValidator.validate(commandLine);
+
         if (isDisplayHelp(args)) {
             new HelpFormatter().printHelp("multi-jmx", multiJMXArgumentParser.getOptions(), true);
         }
         if (args.length > 0) {
-            MultiJMXOptions jmxOptions = multiJMXOptionValidator.validate(multiJMXArgumentParser.parseArguments(args));
+            MultiJMXOptions jmxOptions = multiJMXArgumentParser.parseArguments(commandLine);
             List<Exception> errors = multiJMXProcessor.run(jmxOptions)
                     .peek(jmxResponse -> display(jmxResponse, jmxOptions.getDelimiter(), writer))
                     .flatMap(this::getExceptions)

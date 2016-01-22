@@ -1,11 +1,12 @@
 package uk.co.harrymartland.multijmx;
 
-import org.apache.commons.cli.Options;
+import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.junit.Assert;
 import org.junit.Test;
 import uk.co.harrymartland.multijmx.Writer.Writer;
 import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParser;
+import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParserImpl;
 import uk.co.harrymartland.multijmx.domain.JMXConnectionResponse;
 import uk.co.harrymartland.multijmx.domain.JMXValueResult;
 import uk.co.harrymartland.multijmx.domain.MultiJMXOptions;
@@ -20,6 +21,9 @@ import java.util.Arrays;
 import static uk.co.harrymartland.multijmx.ExceptionUtils.getStackTrace;
 
 public class MainTest {
+
+    private final String VALID_OBJECT_NAME = "java.lang:type=OperatingSystem";
+    private final String[] VALID_ARGS = {"-o", VALID_OBJECT_NAME, "-a", "att"};
 
     private Main main = new Main();
 
@@ -62,7 +66,7 @@ public class MainTest {
         new Main().run(createMultiArgumentParser(multiJMXOptions),
                 createMultiJmxProcessor(
                         createConnectionResponse("connection", createValueResult(3))
-                ), new NoValidationValidator(), retreivableWriter, new NoWait(), new String[]{"-o"});
+                ), new NoValidationValidator(), retreivableWriter, new NoWait(), VALID_ARGS);
 
         Assert.assertEquals("connection 3\n", retreivableWriter.getValue());
 
@@ -80,7 +84,7 @@ public class MainTest {
         new Main().run(createMultiArgumentParser(multiJMXOptions),
                 createMultiJmxProcessor(
                         createConnectionResponse("connection", createValueResult(4), createValueResult(exception))
-                ), new NoValidationValidator(), retreivableWriter, new NoWait(), new String[]{"-o"});
+                ), new NoValidationValidator(), retreivableWriter, new NoWait(), VALID_ARGS);
 
         Assert.assertEquals("connection 4 exception message\nErrors have occurred (1)\nPress enter to see next stack trace\n" + getStackTrace(exception) + "\n", retreivableWriter.getValue());
 
@@ -95,7 +99,7 @@ public class MainTest {
         new Main().run(createMultiArgumentParser(multiJMXOptions),
                 createMultiJmxProcessor(
                         createConnectionResponse("connection", createValueResult(3), createValueResult(4))
-                ), new NoValidationValidator(), retreivableWriter, new NoWait(), new String[]{"-o"});
+                ), new NoValidationValidator(), retreivableWriter, new NoWait(), VALID_ARGS);
 
         Assert.assertEquals("connection 3 4\n", retreivableWriter.getValue());
 
@@ -110,7 +114,7 @@ public class MainTest {
         new Main().run(createMultiArgumentParser(multiJMXOptions),
                 createMultiJmxProcessor(
                         createConnectionResponse("connection", createValueResult(3)), createConnectionResponse("connection2", createValueResult(4))
-                ), new NoValidationValidator(), retreivableWriter, new NoWait(), new String[]{"-o"});
+                ), new NoValidationValidator(), retreivableWriter, new NoWait(), VALID_ARGS);
 
         Assert.assertEquals("connection 3\nconnection2 4\n", retreivableWriter.getValue());
 
@@ -127,7 +131,7 @@ public class MainTest {
         new Main().run(createMultiArgumentParser(multiJMXOptions),
                 createMultiJmxProcessor(
                         createConnectionResponse("connection", exception)
-                ), new NoValidationValidator(), retreivableWriter, new NoWait(), new String[]{"-o"});
+                ), new NoValidationValidator(), retreivableWriter, new NoWait(), VALID_ARGS);
 
         Assert.assertEquals("connection ERROR (exception message)\nErrors have occurred (1)\nPress enter to see next stack trace\n" + getStackTrace(exception) + "\n",
                 retreivableWriter.getValue());
@@ -135,10 +139,9 @@ public class MainTest {
     }
 
     private static class NoValidationValidator implements MultiJMXOptionValidator {
-
         @Override
-        public MultiJMXOptions validate(MultiJMXOptions multiJMXOptions) throws ValidationException {
-            return multiJMXOptions;
+        public CommandLine validate(CommandLine commandLine) throws ValidationException {
+            return commandLine;
         }
     }
 
@@ -189,15 +192,10 @@ public class MainTest {
     }
 
     private MultiJMXArgumentParser createMultiArgumentParser(final MultiJMXOptions multiJMXOptions) {
-        return new MultiJMXArgumentParser() {
+        return new MultiJMXArgumentParserImpl() {
             @Override
-            public MultiJMXOptions parseArguments(String[] args) throws ParseException {
+            public MultiJMXOptions parseArguments(CommandLine cmd) throws ParseException {
                 return multiJMXOptions;
-            }
-
-            @Override
-            public Options getOptions() {
-                return null;
             }
         };
     }

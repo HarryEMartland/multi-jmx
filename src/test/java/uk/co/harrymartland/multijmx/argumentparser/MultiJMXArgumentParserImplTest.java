@@ -1,5 +1,7 @@
 package uk.co.harrymartland.multijmx.argumentparser;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
@@ -198,12 +200,13 @@ public class MultiJMXArgumentParserImplTest {
         //todo test get process id url from file and cmd line
     }
 
-    private String[] addToWorkingArgumentString(String toAdd) {
+    //todo tidy up and use array of strings rather than one string
+    private CommandLine addToWorkingArgumentString(String toAdd) throws ParseException {
         return arguments("-o " + VALID_OBJECT_NAME + " -a attribute " + toAdd);
     }
 
-    private String[] arguments(String string) {
-        return StringUtils.split(string, " ");
+    private CommandLine arguments(String string) throws ParseException {
+        return new DefaultParser().parse(multiJMXArgumentParser.getOptions(), StringUtils.split(string, " "));
     }
 
     private void assertJMXConnection(JMXConnection actual, JMXConnection expected) {

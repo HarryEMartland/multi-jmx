@@ -1,6 +1,9 @@
 package uk.co.harrymartland.multijmx.argumentparser;
 
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import sun.management.ConnectorAddressLink;
@@ -27,9 +30,8 @@ public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
     private Options options = null;
 
     @Override
-    public MultiJMXOptions parseArguments(String[] args) throws ParseException {
+    public MultiJMXOptions parseArguments(CommandLine cmd) throws ParseException {
 
-        CommandLine cmd = new DefaultParser().parse(getOptions(), args);
         MultiJMXOptions multiJMXOptions = new MultiJMXOptions();
 
         multiJMXOptions.setAttributes(Arrays.asList(cmd.getOptionValues("a")));
