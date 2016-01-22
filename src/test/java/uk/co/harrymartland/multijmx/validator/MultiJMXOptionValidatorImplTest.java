@@ -48,6 +48,47 @@ public class MultiJMXOptionValidatorImplTest {
         assertNoExceptionThrown(createCommandLine("-a", "att", "-o", VALID_OBJECT_NAME));
     }
 
+    @Test
+    public void testShouldAcceptMethodWithNoArgsAsAttribute() throws Exception {
+        assertNoExceptionThrown(createCommandLine("-a", "att()", "-o", VALID_OBJECT_NAME));
+    }
+
+    @Test
+    public void testShouldAcceptMethodWithStringArgumentAsAttribute() throws Exception {
+        assertNoExceptionThrown(createCommandLine("-a", "att((String)test)", "-o", VALID_OBJECT_NAME));
+    }
+
+    @Test
+    public void testShouldAcceptMethodWithMultipleStringArgumentAsAttribute() throws Exception {
+        assertNoExceptionThrown(createCommandLine("-a", "att((String)test,(String)test2)", "-o", VALID_OBJECT_NAME));
+    }
+
+    @Test
+    public void testShouldAcceptMethodWithIntegerArgumentAsAttribute() throws Exception {
+        assertNoExceptionThrown(createCommandLine("-a", "att((Integer)4)", "-o", VALID_OBJECT_NAME));
+    }
+
+    @Test
+    public void testShouldNotAcceptMethodWithInvalidIntegerArgumentAsAttribute() throws Exception {
+        assertExceptionThrown(createCommandLine("-a", "att((Integer)test)", "-o", VALID_OBJECT_NAME), "Error cannot convert test to java.lang.Integer");
+    }
+
+    @Test
+    public void testShouldNotAcceptMethodWithNoClass() throws Exception {
+        assertExceptionThrown(createCommandLine("-a", "att(test)", "-o", VALID_OBJECT_NAME), "Error no class found for method att");
+    }
+
+    @Test
+    public void testShouldNotAcceptMethodWithNoValue() throws Exception {
+        assertExceptionThrown(createCommandLine("-a", "att((Integer))", "-o", VALID_OBJECT_NAME), "Error no value found for method att class java.lang.Integer");
+    }
+
+    @Test
+    public void testShouldNotAcceptMethodWithInvalidClassAsAttribute() throws Exception {
+        assertExceptionThrown(createCommandLine("-a", "att((uk.co.harrymartland.Test)test)", "-o", VALID_OBJECT_NAME), "Error cannot find class uk.co.harrymartland.Test");
+    }
+
+
     private CommandLine createCommandLine(String... args) throws ParseException {
         return new DefaultParser().parse(multiJMXArgumentParser.getOptions(), args);
     }
