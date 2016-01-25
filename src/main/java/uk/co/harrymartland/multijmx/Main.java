@@ -4,8 +4,6 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.ParseException;
-import uk.co.harrymartland.multijmx.Writer.SystemOutWriter;
-import uk.co.harrymartland.multijmx.Writer.Writer;
 import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParser;
 import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParserImpl;
 import uk.co.harrymartland.multijmx.domain.JMXConnectionResponse;
@@ -18,6 +16,8 @@ import uk.co.harrymartland.multijmx.validator.MultiJMXOptionValidatorImpl;
 import uk.co.harrymartland.multijmx.validator.ValidationException;
 import uk.co.harrymartland.multijmx.waitable.SystemWaitable;
 import uk.co.harrymartland.multijmx.waitable.Waitable;
+import uk.co.harrymartland.multijmx.writer.SystemOutWriter;
+import uk.co.harrymartland.multijmx.writer.Writer;
 
 import java.util.List;
 import java.util.Objects;

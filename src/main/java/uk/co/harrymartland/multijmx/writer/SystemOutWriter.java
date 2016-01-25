@@ -1,4 +1,4 @@
-package uk.co.harrymartland.multijmx.Writer;
+package uk.co.harrymartland.multijmx.writer;
 
 public class SystemOutWriter implements Writer {
     @Override
