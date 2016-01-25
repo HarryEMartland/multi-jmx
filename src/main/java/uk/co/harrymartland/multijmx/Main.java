@@ -43,13 +43,14 @@ public class Main {
     public void run(MultiJMXArgumentParser multiJMXArgumentParser, MultiJAEProcessor multiJMXProcessor,
                     MultiJMXOptionValidator multiJMXOptionValidator, Writer writer, Waitable waitable, String[] args) throws ParseException, ValidationException {
 
-        CommandLine commandLine = new DefaultParser().parse(multiJMXArgumentParser.getOptions(), args);
-        multiJMXOptionValidator.validate(commandLine);
-
         if (isDisplayHelp(args)) {
             new HelpFormatter().printHelp("multi-jmx", multiJMXArgumentParser.getOptions(), true);
         }
         if (args.length > 0) {
+
+            CommandLine commandLine = new DefaultParser().parse(multiJMXArgumentParser.getOptions(), args);
+            multiJMXOptionValidator.validate(commandLine);
+
             MultiJMXOptions jmxOptions = multiJMXArgumentParser.parseArguments(commandLine);
             List<Exception> errors = multiJMXProcessor.run(jmxOptions)
                     .peek(jmxResponse -> display(jmxResponse, jmxOptions.getDelimiter(), writer))
@@ -97,7 +98,7 @@ public class Main {
     }
 
     public boolean isDisplayHelp(String[] args) {
-        return args.length == 0 || isHelpOption(args);
+        return args.length == 0 || isHelpOption(args);//todo write test?
     }
 
     private boolean isHelpOption(String[] args) {
