@@ -3,9 +3,9 @@ package uk.co.harrymartland.multijmx.jmxrunner;
 import uk.co.harrymartland.multijmx.domain.JMXConnectionResponse;
 import uk.co.harrymartland.multijmx.domain.JMXValueResult;
 import uk.co.harrymartland.multijmx.domain.connection.JMXConnection;
+import uk.co.harrymartland.multijmx.domain.valueretriver.JMXValueRetriever;
 
 import javax.management.MBeanServerConnection;
-import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import java.util.ArrayList;
@@ -16,13 +16,11 @@ import java.util.concurrent.Callable;
 
 public abstract class AbstractJmxRunner implements Callable<JMXConnectionResponse> {
 
-    private final List<ObjectName> objectNames;
-    private final List<String> attributes;
+    private final List<JMXValueRetriever> jmxValueRetrievers;
     private final JMXConnection jmxConnection;
 
-    public AbstractJmxRunner(List<ObjectName> objectNames, List<String> attributes, JMXConnection jmxConnection) {
-        this.objectNames = objectNames;
-        this.attributes = attributes;
+    public AbstractJmxRunner(List<JMXValueRetriever> jmxValueRetrievers, JMXConnection jmxConnection) {
+        this.jmxValueRetrievers = jmxValueRetrievers;
         this.jmxConnection = jmxConnection;
     }
 
@@ -31,19 +29,14 @@ public abstract class AbstractJmxRunner implements Callable<JMXConnectionRespons
             JMXConnector jmxc = JMXConnectorFactory.connect(jmxConnection.getJmxServiceURL(), getEnv());
             MBeanServerConnection mBeanServerConnection = jmxc.getMBeanServerConnection();
 
-            Iterator<String> attributeIterator = attributes.iterator();
-            Iterator<ObjectName> objectNameIterator = objectNames.iterator();
+            Iterator<JMXValueRetriever> jmxValueRetrieverIterator = jmxValueRetrievers.iterator();
 
-            ObjectName objectName = null;
-            List<JMXValueResult> values = new ArrayList<>(attributes.size());
+            List<JMXValueResult> values = new ArrayList<>(jmxValueRetrievers.size());
 
-            while (attributeIterator.hasNext()) {
+            while (jmxValueRetrieverIterator.hasNext()) {
 
-                if (objectNameIterator.hasNext()) {
-                    objectName = objectNameIterator.next();
-                }
                 try {
-                    values.add(new JMXValueResult((Comparable) mBeanServerConnection.getAttribute(objectName, attributeIterator.next())));
+                    values.add(new JMXValueResult(jmxValueRetrieverIterator.next().getValue(mBeanServerConnection)));
                 } catch (Exception e) {
                     values.add(new JMXValueResult(e));
                 }

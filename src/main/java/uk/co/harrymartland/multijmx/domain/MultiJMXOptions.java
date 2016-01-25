@@ -13,7 +13,7 @@ public class MultiJMXOptions {
     private boolean reverseOrder;
     private Integer maxThreads;
     private List<ObjectName> objectNames;
-    private List<String> attributes;
+    private List<String> signatures;
     private String username;
     private String password;
     private List<JMXConnection> urls;
@@ -67,12 +67,12 @@ public class MultiJMXOptions {
         this.objectNames = objectNames;
     }
 
-    public List<String> getAttributes() {
-        return attributes;
+    public List<String> getSignatures() {
+        return signatures;
     }
 
-    public void setAttributes(List<String> attributes) {
-        this.attributes = attributes;
+    public void setSignatures(List<String> signatures) {
+        this.signatures = signatures;
     }
 
     public String getUsername() {
