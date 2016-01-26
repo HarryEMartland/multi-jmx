@@ -20,7 +20,7 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MultiJMXProcessorImpl implements MultiJAEProcessor {
+public class MultiJMXProcessorImpl implements MultiJMXProcessor {
 
 
     @Override

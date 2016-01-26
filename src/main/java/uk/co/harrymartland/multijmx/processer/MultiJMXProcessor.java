@@ -5,7 +5,7 @@ import uk.co.harrymartland.multijmx.domain.MultiJMXOptions;
 
 import java.util.stream.Stream;
 
-public interface MultiJAEProcessor {
+public interface MultiJMXProcessor {
 
     Stream<JMXConnectionResponse> run(MultiJMXOptions multiJMXOptions);
 

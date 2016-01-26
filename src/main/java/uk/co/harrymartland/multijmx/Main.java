@@ -1,22 +1,21 @@
 package uk.co.harrymartland.multijmx;
 
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.ParseException;
 import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParser;
-import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParserImpl;
 import uk.co.harrymartland.multijmx.domain.JMXConnectionResponse;
 import uk.co.harrymartland.multijmx.domain.JMXValueResult;
 import uk.co.harrymartland.multijmx.domain.MultiJMXOptions;
-import uk.co.harrymartland.multijmx.processer.MultiJAEProcessor;
-import uk.co.harrymartland.multijmx.processer.MultiJMXProcessorImpl;
+import uk.co.harrymartland.multijmx.module.MultiJMXModule;
+import uk.co.harrymartland.multijmx.processer.MultiJMXProcessor;
 import uk.co.harrymartland.multijmx.validator.MultiJMXOptionValidator;
-import uk.co.harrymartland.multijmx.validator.MultiJMXOptionValidatorImpl;
 import uk.co.harrymartland.multijmx.validator.ValidationException;
-import uk.co.harrymartland.multijmx.waitable.SystemWaitable;
 import uk.co.harrymartland.multijmx.waitable.Waitable;
-import uk.co.harrymartland.multijmx.writer.SystemOutWriter;
 import uk.co.harrymartland.multijmx.writer.Writer;
 
 import java.util.List;
@@ -29,19 +28,31 @@ import static uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParser
 
 public class Main {
 
-    public static void main(String[] args) throws ParseException, ValidationException {
-        SystemWaitable systemWaitable = null;
-        try {
-            systemWaitable = new SystemWaitable();
-            new Main().run(new MultiJMXArgumentParserImpl(), new MultiJMXProcessorImpl(),
-                    new MultiJMXOptionValidatorImpl(), new SystemOutWriter(), systemWaitable, args);
-        } finally {
-            ExceptionUtils.closeQuietly(systemWaitable);
-        }
+
+    private MultiJMXArgumentParser multiJMXArgumentParser;
+    private MultiJMXOptionValidator multiJMXOptionValidator;
+    private MultiJMXProcessor multiJMXProcessor;
+    private Writer writer;
+    private Waitable waitable;
+
+    @Inject
+    public Main(MultiJMXArgumentParser multiJMXArgumentParser, MultiJMXOptionValidator multiJMXOptionValidator,
+                MultiJMXProcessor multiJMXProcessor, Writer writer, Waitable waitable) {
+
+        this.multiJMXArgumentParser = multiJMXArgumentParser;
+        this.multiJMXOptionValidator = multiJMXOptionValidator;
+        this.multiJMXProcessor = multiJMXProcessor;
+        this.writer = writer;
+        this.waitable = waitable;
     }
 
-    public void run(MultiJMXArgumentParser multiJMXArgumentParser, MultiJAEProcessor multiJMXProcessor,
-                    MultiJMXOptionValidator multiJMXOptionValidator, Writer writer, Waitable waitable, String[] args) throws ParseException, ValidationException {
+    public static void main(String[] args) throws ParseException, ValidationException {
+        Injector injector = Guice.createInjector(new MultiJMXModule());
+        Main main = injector.getInstance(Main.class);//todo system readn and write close with guice
+        main.run(args);
+    }
+
+    public void run(String[] args) throws ParseException, ValidationException {
 
         if (isDisplayHelp(args)) {
             new HelpFormatter().printHelp("multi-jmx", multiJMXArgumentParser.getOptions(), true);
