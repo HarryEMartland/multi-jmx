@@ -40,7 +40,7 @@ public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
         multiJMXOptions.setOrderConnection(cmd.hasOption("c"));
         multiJMXOptions.setOrderValue(cmd.hasOption("v"));
         multiJMXOptions.setReverseOrder(cmd.hasOption("r"));
-        multiJMXOptions.setPassword(cmd.getOptionValue("p"));
+        multiJMXOptions.setPassword(cmd.getOptionValue("p"));//todo option names in public static field
         multiJMXOptions.setUsername(cmd.getOptionValue("u"));
         multiJMXOptions.setUrls(createConnections(cmd));
         multiJMXOptions.setDelimiter(cmd.getOptionValue("d", DELEMITER_DEFAULT));
