@@ -3,9 +3,10 @@ package uk.co.harrymartland.multijmx.validator;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.lang3.StringUtils;
 import uk.co.harrymartland.multijmx.validator.argumentvaluetype.ArgumentValueType;
-import uk.co.harrymartland.multijmx.validator.argumentvaluetype.IntegerArgumentValueType;
 
 import java.util.Optional;
+
+import static uk.co.harrymartland.multijmx.MethodStrUtils.*;
 
 public class MultiJMXOptionValidatorImpl implements MultiJMXOptionValidator {
 
@@ -54,18 +55,16 @@ public class MultiJMXOptionValidatorImpl implements MultiJMXOptionValidator {
         if (!argumentClass.isPresent()) {
             throw new ValidationException("Error cannot find class " + className);
         } else {
-            ArgumentValueType argumentValueType = findArgumentValueType(argumentClass.get());
+            ArgumentValueType argumentValueType;
+            try {
+                argumentValueType = findArgumentValueType(argumentClass.get());
+            } catch (ClassNotFoundException e) {
+                throw new ValidationException(e.getMessage(), e);
+            }
             if (!argumentValueType.isValid(value)) {
                 throw new ValidationException("Error cannot convert " + value + " to " + className);
             }
         }
-    }
-
-    private ArgumentValueType findArgumentValueType(Class clazz) throws ValidationException {
-        return IntegerArgumentValueType.ARGUMENT_VALUE_TYPES.stream()
-                .filter(argumentValueType -> argumentValueType.forClass().equals(clazz))
-                .findFirst()
-                .orElseThrow(() -> new ValidationException("No Validator found for type " + clazz.getCanonicalName()));
     }
 
     private void validateObjectsAndAttributesCount(CommandLine commandLine) throws ValidationException {
@@ -82,18 +81,4 @@ public class MultiJMXOptionValidatorImpl implements MultiJMXOptionValidator {
         }
     }
 
-    private String expandClassName(final String className) {
-        if (StringUtils.contains(className, ".")) {
-            return className;
-        }
-        return "java.lang." + className;
-    }
-
-    private Optional<Class> isValidClass(String className) {
-        try {
-            return Optional.of(Class.forName(className));
-        } catch (ClassNotFoundException e) {
-            return Optional.empty();
-        }
-    }
 }

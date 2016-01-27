@@ -14,7 +14,7 @@ public class IntegerArgumentValueType implements ArgumentValueType {
     }
 
     @Override
-    public Object parse(String argument) {
+    public Comparable parse(String argument) {
         return Integer.parseInt(argument);
     }
 }

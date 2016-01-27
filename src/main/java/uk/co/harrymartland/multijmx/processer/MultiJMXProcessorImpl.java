@@ -1,10 +1,13 @@
 package uk.co.harrymartland.multijmx.processer;
 
+import org.apache.commons.lang3.StringUtils;
+import uk.co.harrymartland.multijmx.MethodStrUtils;
 import uk.co.harrymartland.multijmx.domain.JMXConnectionResponse;
 import uk.co.harrymartland.multijmx.domain.MultiJMXOptions;
 import uk.co.harrymartland.multijmx.domain.connection.JMXConnection;
 import uk.co.harrymartland.multijmx.domain.valueretriver.AttributeValueRetriever;
 import uk.co.harrymartland.multijmx.domain.valueretriver.JMXValueRetriever;
+import uk.co.harrymartland.multijmx.domain.valueretriver.MethodValueRetriever;
 import uk.co.harrymartland.multijmx.jmxrunner.PasswordJmxRunner;
 import uk.co.harrymartland.multijmx.jmxrunner.RemoteJmxRunner;
 
@@ -21,7 +24,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class MultiJMXProcessorImpl implements MultiJMXProcessor {
-
 
     @Override
     public Stream<JMXConnectionResponse> run(MultiJMXOptions multiJMXOptions) {
@@ -116,7 +118,33 @@ public class MultiJMXProcessorImpl implements MultiJMXProcessor {
 
     private JMXValueRetriever createJMXValueRetriever(String signature, ObjectName objectName) {
         if (signature.contains("(")) {
-            throw new UnsupportedOperationException("Method invocation not implemented yet");//todo implement
+
+            final String[] signatureNameArgSplit = StringUtils.split(signature, "(");
+            final String methodName = signatureNameArgSplit[0];
+            final String argumentsString = signatureNameArgSplit[1].substring(0, signatureNameArgSplit[1].length() - 1);
+            final String[] arguments = StringUtils.split(argumentsString, ",");
+
+            final String[] parameterTypes = new String[arguments.length];
+            final Comparable[] parameterValues = new String[arguments.length];
+
+            for (int i = 0; i < arguments.length; i++) {
+                try {
+                    final String argument = arguments[i];
+                    final String[] classSplit = StringUtils.split(argument, ")");
+                    final String parameterType = MethodStrUtils.expandClassName(classSplit[0].substring(1, classSplit[0].length()));
+                    final String parameterValueStr = classSplit[1];
+
+                    final Comparable parameterValue = MethodStrUtils.findArgumentValueType(MethodStrUtils.isValidClass(parameterType).get()).parse(parameterValueStr);
+
+                    parameterTypes[i] = parameterType;
+                    parameterValues[i] = parameterValue;
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            return new MethodValueRetriever(objectName, methodName, parameterTypes, parameterValues);
+
         } else {
             return new AttributeValueRetriever(objectName, signature);
         }
