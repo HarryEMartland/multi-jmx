@@ -1,6 +1,8 @@
 package uk.co.harrymartland.multijmx.module;
 
 import com.google.inject.AbstractModule;
+import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParser;
+import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParserImpl;
 import uk.co.harrymartland.multijmx.processer.MultiJMXProcessor;
 import uk.co.harrymartland.multijmx.processer.MultiJMXProcessorImpl;
 import uk.co.harrymartland.multijmx.validator.MultiJMXOptionValidator;
@@ -18,5 +20,6 @@ public class MultiJMXModule extends AbstractModule{
         bind(MultiJMXProcessor.class).to(MultiJMXProcessorImpl.class);
         bind(Writer.class).to(SystemOutWriter.class);
         bind(Waitable.class).to(SystemWaitable.class);
+        bind(MultiJMXArgumentParser.class).to(MultiJMXArgumentParserImpl.class);
     }
 }
