@@ -11,6 +11,7 @@ import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParser;
 import uk.co.harrymartland.multijmx.domain.JMXConnectionResponse;
 import uk.co.harrymartland.multijmx.domain.JMXValueResult;
 import uk.co.harrymartland.multijmx.domain.MultiJMXOptions;
+import uk.co.harrymartland.multijmx.domain.lifecycle.LifeCycleController;
 import uk.co.harrymartland.multijmx.module.MultiJMXModule;
 import uk.co.harrymartland.multijmx.processer.MultiJMXProcessor;
 import uk.co.harrymartland.multijmx.validator.MultiJMXOptionValidator;
@@ -48,8 +49,14 @@ public class Main {
 
     public static void main(String[] args) throws ParseException, ValidationException {
         Injector injector = Guice.createInjector(new MultiJMXModule());
-        Main main = injector.getInstance(Main.class);//todo system readn and write close with guice
-        main.run(args);
+        Main main = injector.getInstance(Main.class);
+        LifeCycleController lifeCycleController = injector.getInstance(LifeCycleController.class);
+        try {
+            lifeCycleController.birthAll();
+            main.run(args);
+        }finally {
+            lifeCycleController.killAll();
+        }
     }
 
     public void run(String[] args) throws ParseException, ValidationException {

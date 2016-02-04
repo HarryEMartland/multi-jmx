@@ -1,10 +1,14 @@
 package uk.co.harrymartland.multijmx.module;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.multibindings.Multibinder;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParser;
 import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParserImpl;
+import uk.co.harrymartland.multijmx.domain.lifecycle.LifeCycleAble;
+import uk.co.harrymartland.multijmx.domain.lifecycle.LifeCycleController;
+import uk.co.harrymartland.multijmx.domain.lifecycle.LifeCycleControllerImpl;
 import uk.co.harrymartland.multijmx.processer.MultiJMXProcessor;
 import uk.co.harrymartland.multijmx.processer.MultiJMXProcessorImpl;
 import uk.co.harrymartland.multijmx.service.valueretriever.ValueRetrieverService;
@@ -28,5 +32,9 @@ public class MultiJMXModule extends AbstractModule{
         bind(MultiJMXArgumentParser.class).to(MultiJMXArgumentParserImpl.class);
         bind(ExpressionParser.class).to(SpelExpressionParser.class);
         bind(ValueRetrieverService.class).to(ValueRetrieverServiceImpl.class);
+        bind(LifeCycleController.class).to(LifeCycleControllerImpl.class);
+
+        Multibinder<LifeCycleAble> lifeCycleAbleMultibinder = Multibinder.newSetBinder(binder(), LifeCycleAble.class);
+        lifeCycleAbleMultibinder.addBinding().to(SystemWaitable.class);
     }
 }

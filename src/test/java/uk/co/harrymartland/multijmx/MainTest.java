@@ -154,15 +154,9 @@ public class MainTest {
     }
 
     private static class NoWait implements Waitable {
-
         @Override
         public void await() {
             //do nothing
-        }
-
-        @Override
-        public void close() throws IOException {
-            //to nothing
         }
     }
 

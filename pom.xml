@@ -40,6 +40,11 @@
             <artifactId>mockito-all</artifactId>
             <version>1.10.19</version>
         </dependency>
+        <dependency>
+            <groupId>com.jolira</groupId>
+            <artifactId>multibindings</artifactId>
+            <version>3.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>
