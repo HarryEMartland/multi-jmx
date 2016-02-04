@@ -1,14 +1,20 @@
 package uk.co.harrymartland.multijmx.validator;
 
+import com.google.inject.Inject;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.lang3.StringUtils;
-import uk.co.harrymartland.multijmx.validator.argumentvaluetype.ArgumentValueType;
+import org.springframework.expression.ExpressionParser;
 
-import java.util.Optional;
-
-import static uk.co.harrymartland.multijmx.MethodStrUtils.*;
+import java.util.regex.Pattern;
 
 public class MultiJMXOptionValidatorImpl implements MultiJMXOptionValidator {
+
+    ExpressionParser expressionParser;
+
+    @Inject
+    public MultiJMXOptionValidatorImpl(ExpressionParser expressionParser) {
+        this.expressionParser = expressionParser;
+    }
 
     @Override
     public CommandLine validate(CommandLine commandLine) throws ValidationException {
@@ -20,50 +26,51 @@ public class MultiJMXOptionValidatorImpl implements MultiJMXOptionValidator {
 
     private void validateMethodsAndAttributes(CommandLine commandLine) throws ValidationException {
         for (String attribute : commandLine.getOptionValues("a")) {
-            validateMethodAttribute(attribute);
-        }
-    }
-
-    private void validateMethodAttribute(final String attribute) throws ValidationException {
-
-        final int firstBracket = attribute.indexOf("(");
-
-        if (firstBracket != -1) {
-            final String methodName = attribute.substring(0, firstBracket);
-            final String parameters = attribute.substring(firstBracket + 1, attribute.length() - 1);
-
-            if (StringUtils.isNotBlank(parameters)) {
-                for (final String argString : parameters.split(",")) {
-                    validateArguments(methodName, argString);
-                }
+            if (attribute.contains("(")) {
+                validateMethod(attribute);
+            } else {
+                validateName(attribute);
             }
         }
     }
 
-    private void validateArguments(String methodName, String argString) throws ValidationException {
-        int classEndBracket = argString.lastIndexOf(")");
-        if (classEndBracket == -1) {
-            throw new ValidationException("Error no class found for method " + methodName);
-        }
-        final String className = expandClassName(argString.substring(1, classEndBracket));
-        final String value = argString.substring(classEndBracket + 1, argString.length());
+    private static final Pattern NAME_MATCH = Pattern.compile("[a-zA-Z\\d]*");
 
-        if (StringUtils.isBlank(value)) {
-            throw new ValidationException("Error no value found for method " + methodName + " class " + className);
+    private void validateName(String name) throws ValidationException {
+        if (!NAME_MATCH.matcher(name).matches()) {
+            throw new ValidationException("Name must not contain special characters: " + name);
         }
-        Optional<Class> argumentClass = isValidClass(className);
-        if (!argumentClass.isPresent()) {
-            throw new ValidationException("Error cannot find class " + className);
-        } else {
-            ArgumentValueType argumentValueType;
-            try {
-                argumentValueType = findArgumentValueType(argumentClass.get());
-            } catch (ClassNotFoundException e) {
-                throw new ValidationException(e.getMessage(), e);
+    }
+
+    private void validateMethod(final String signature) throws ValidationException {
+
+
+        if (StringUtils.countMatches(signature, "(") != StringUtils.countMatches(signature, ")")
+                || !StringUtils.endsWith(signature, ")")
+                || StringUtils.startsWith(signature, "(")) {
+            throw new ValidationException("Method signature should match methodName(arg1,arg2): " + signature);
+        }
+
+        final int firstBracket = signature.indexOf("(");
+
+        final String methodName = signature.substring(0, firstBracket);
+        final String parameters = signature.substring(firstBracket + 1, signature.length() - 1);
+
+        validateName(methodName);
+
+        if (StringUtils.isNotBlank(parameters)) {
+            for (final String argString : parameters.split(",")) {
+                validateArguments(argString);
             }
-            if (!argumentValueType.isValid(value)) {
-                throw new ValidationException("Error cannot convert " + value + " to " + className);
-            }
+        }
+
+    }
+
+    private void validateArguments(String argString) throws ValidationException {
+        try {
+            expressionParser.parseExpression(argString).getValue();
+        } catch (Exception e) {
+            throw new ValidationException("Incorrect argument parameter: " + argString, e);
         }
     }
 

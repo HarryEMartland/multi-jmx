@@ -5,7 +5,7 @@ public class ValidationException extends Exception {
         super(message);
     }
 
-    public ValidationException(String message, ClassNotFoundException e) {
+    public ValidationException(String message, Exception e) {
         super(message, e);
     }
 }

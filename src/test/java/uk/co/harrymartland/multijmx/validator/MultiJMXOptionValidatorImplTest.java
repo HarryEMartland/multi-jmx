@@ -5,6 +5,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.ParseException;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
 import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParser;
 import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParserImpl;
 
@@ -12,7 +13,7 @@ public class MultiJMXOptionValidatorImplTest {
 
     private final String VALID_OBJECT_NAME = "java.lang:type=OperatingSystem";
 
-    private MultiJMXOptionValidator multiJMXOptionValidator = new MultiJMXOptionValidatorImpl();
+    private MultiJMXOptionValidator multiJMXOptionValidator = new MultiJMXOptionValidatorImpl(new SpelExpressionParser());
     private MultiJMXArgumentParser multiJMXArgumentParser = new MultiJMXArgumentParserImpl();
 
     @Test
@@ -24,6 +25,21 @@ public class MultiJMXOptionValidatorImplTest {
     @Test
     public void testShouldNotThrowExceptionWhenOneObjectAndMultipleAttributes() throws Exception {
         assertNoExceptionThrown(createCommandLine("-o", VALID_OBJECT_NAME, "-a", "att1", "-a", "att2", "-a", "att3"));
+    }
+
+    @Test
+    public void testShouldThrowExceptionWhenInvalidAttribute() throws Exception {
+        assertExceptionThrown(createCommandLine("-o", VALID_OBJECT_NAME, "-a", "att*"), "Name must not contain special characters: att*");
+    }
+
+    @Test
+    public void testShouldThrowExceptionWhenInvalidMethod() throws Exception {
+        assertExceptionThrown(createCommandLine("-o", VALID_OBJECT_NAME, "-a", "att*()"), "Name must not contain special characters: att*");
+    }
+
+    @Test
+    public void testShouldThrowExceptionWhenInvalidMethodWithArg() throws Exception {
+        assertExceptionThrown(createCommandLine("-o", VALID_OBJECT_NAME, "-a", "att*(1)"), "Name must not contain special characters: att*");
     }
 
     @Test
@@ -55,37 +71,22 @@ public class MultiJMXOptionValidatorImplTest {
 
     @Test
     public void testShouldAcceptMethodWithStringArgumentAsAttribute() throws Exception {
-        assertNoExceptionThrown(createCommandLine("-a", "att((String)test)", "-o", VALID_OBJECT_NAME));
+        assertNoExceptionThrown(createCommandLine("-a", "att(\"test\")", "-o", VALID_OBJECT_NAME));
     }
 
     @Test
     public void testShouldAcceptMethodWithMultipleStringArgumentAsAttribute() throws Exception {
-        assertNoExceptionThrown(createCommandLine("-a", "att((String)test,(String)test2)", "-o", VALID_OBJECT_NAME));
+        assertNoExceptionThrown(createCommandLine("-a", "att(\"test\",\"test2\")", "-o", VALID_OBJECT_NAME));
     }
 
     @Test
     public void testShouldAcceptMethodWithIntegerArgumentAsAttribute() throws Exception {
-        assertNoExceptionThrown(createCommandLine("-a", "att((Integer)4)", "-o", VALID_OBJECT_NAME));
-    }
-
-    @Test
-    public void testShouldNotAcceptMethodWithInvalidIntegerArgumentAsAttribute() throws Exception {
-        assertExceptionThrown(createCommandLine("-a", "att((Integer)test)", "-o", VALID_OBJECT_NAME), "Error cannot convert test to java.lang.Integer");
-    }
-
-    @Test
-    public void testShouldNotAcceptMethodWithNoClass() throws Exception {
-        assertExceptionThrown(createCommandLine("-a", "att(test)", "-o", VALID_OBJECT_NAME), "Error no class found for method att");
-    }
-
-    @Test
-    public void testShouldNotAcceptMethodWithNoValue() throws Exception {
-        assertExceptionThrown(createCommandLine("-a", "att((Integer))", "-o", VALID_OBJECT_NAME), "Error no value found for method att class java.lang.Integer");
+        assertNoExceptionThrown(createCommandLine("-a", "att(4)", "-o", VALID_OBJECT_NAME));
     }
 
     @Test
     public void testShouldNotAcceptMethodWithInvalidClassAsAttribute() throws Exception {
-        assertExceptionThrown(createCommandLine("-a", "att((uk.co.harrymartland.Test)test)", "-o", VALID_OBJECT_NAME), "Error cannot find class uk.co.harrymartland.Test");
+        assertExceptionThrown(createCommandLine("-a", "att(new uk.co.harrymartland.Test())", "-o", VALID_OBJECT_NAME), "Incorrect argument parameter: new uk.co.harrymartland.Test()");
     }
 
 

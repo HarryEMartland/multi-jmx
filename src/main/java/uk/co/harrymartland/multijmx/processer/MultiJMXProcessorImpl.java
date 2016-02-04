@@ -1,13 +1,15 @@
 package uk.co.harrymartland.multijmx.processer;
 
+import com.google.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
-import uk.co.harrymartland.multijmx.MethodStrUtils;
+import org.springframework.expression.ExpressionParser;
 import uk.co.harrymartland.multijmx.domain.JMXConnectionResponse;
 import uk.co.harrymartland.multijmx.domain.MultiJMXOptions;
 import uk.co.harrymartland.multijmx.domain.connection.JMXConnection;
+import uk.co.harrymartland.multijmx.domain.typeable.Typeable;
 import uk.co.harrymartland.multijmx.domain.valueretriver.AttributeValueRetriever;
 import uk.co.harrymartland.multijmx.domain.valueretriver.JMXValueRetriever;
-import uk.co.harrymartland.multijmx.domain.valueretriver.MethodValueRetriever;
+import uk.co.harrymartland.multijmx.domain.valueretriver.SpelMethodValueRetriever;
 import uk.co.harrymartland.multijmx.jmxrunner.PasswordJmxRunner;
 import uk.co.harrymartland.multijmx.jmxrunner.RemoteJmxRunner;
 
@@ -24,6 +26,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class MultiJMXProcessorImpl implements MultiJMXProcessor {
+
+    private ExpressionParser expressionParser;
+
+    @Inject
+    public MultiJMXProcessorImpl(ExpressionParser expressionParser) {
+        this.expressionParser = expressionParser;
+    }
 
     @Override
     public Stream<JMXConnectionResponse> run(MultiJMXOptions multiJMXOptions) {
@@ -116,34 +125,23 @@ public class MultiJMXProcessorImpl implements MultiJMXProcessor {
 
     }
 
+    //todo refactor
     private JMXValueRetriever createJMXValueRetriever(String signature, ObjectName objectName) {
         if (signature.contains("(")) {
 
-            final String[] signatureNameArgSplit = StringUtils.split(signature, "(");
-            final String methodName = signatureNameArgSplit[0];
-            final String argumentsString = signatureNameArgSplit[1].substring(0, signatureNameArgSplit[1].length() - 1);
-            final String[] arguments = StringUtils.split(argumentsString, ",");
 
-            final String[] parameterTypes = new String[arguments.length];
-            final Comparable[] parameterValues = new String[arguments.length];
+            final int firstOpenBracket = signature.indexOf("(");
+            final String methodName = signature.substring(0, firstOpenBracket);
+            final String argumentsString = signature.substring(firstOpenBracket + 1, signature.length() - 1);//todo assert no brakcets and ends with bracket
+            final String[] arguments = StringUtils.split(argumentsString, ",");
+            final Typeable[] argumentValues = new Typeable[arguments.length];
 
             for (int i = 0; i < arguments.length; i++) {
-                try {
-                    final String argument = arguments[i];
-                    final String[] classSplit = StringUtils.split(argument, ")");
-                    final String parameterType = MethodStrUtils.expandClassName(classSplit[0].substring(1, classSplit[0].length()));
-                    final String parameterValueStr = classSplit[1];
+                String argument = arguments[i];
+                argumentValues[i] = (Typeable) expressionParser.parseExpression(argument).getValue();
 
-                    final Comparable parameterValue = MethodStrUtils.findArgumentValueType(MethodStrUtils.isValidClass(parameterType).get()).parse(parameterValueStr);
-
-                    parameterTypes[i] = parameterType;
-                    parameterValues[i] = parameterValue;
-                } catch (ClassNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
             }
-
-            return new MethodValueRetriever(objectName, methodName, parameterTypes, parameterValues);
+            return new SpelMethodValueRetriever(objectName, methodName, argumentValues);
 
         } else {
             return new AttributeValueRetriever(objectName, signature);
