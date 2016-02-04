@@ -132,7 +132,7 @@ public class MultiJMXProcessorImpl implements MultiJMXProcessor {
 
             final int firstOpenBracket = signature.indexOf("(");
             final String methodName = signature.substring(0, firstOpenBracket);
-            final String argumentsString = signature.substring(firstOpenBracket + 1, signature.length() - 1);//todo assert no brakcets and ends with bracket
+            final String argumentsString = signature.substring(firstOpenBracket + 1, signature.length() - 1);
             final String[] arguments = StringUtils.split(argumentsString, ",");
             final Typeable[] argumentValues = new Typeable[arguments.length];
 

@@ -34,7 +34,7 @@ public class ValueRetrieverServiceImpl implements ValueRetrieverService {
     private JMXValueRetriever createMethodValueRetriever(ObjectName objectName, String signature) {
         final int firstOpenBracket = signature.indexOf("(");
         final String methodName = signature.substring(0, firstOpenBracket);
-        final String argumentsString = signature.substring(firstOpenBracket + 1, signature.length() - 1);//todo validate no brackets and ends with bracket
+        final String argumentsString = signature.substring(firstOpenBracket + 1, signature.length() - 1);
         final String[] arguments = StringUtils.split(argumentsString, ",");
         final Typeable[] argumentValues = new Typeable[arguments.length];
 
