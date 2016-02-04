@@ -7,6 +7,8 @@ import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParser;
 import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParserImpl;
 import uk.co.harrymartland.multijmx.processer.MultiJMXProcessor;
 import uk.co.harrymartland.multijmx.processer.MultiJMXProcessorImpl;
+import uk.co.harrymartland.multijmx.service.valueretriever.ValueRetrieverService;
+import uk.co.harrymartland.multijmx.service.valueretriever.ValueRetrieverServiceImpl;
 import uk.co.harrymartland.multijmx.validator.MultiJMXOptionValidator;
 import uk.co.harrymartland.multijmx.validator.MultiJMXOptionValidatorImpl;
 import uk.co.harrymartland.multijmx.waitable.SystemWaitable;
@@ -25,5 +27,6 @@ public class MultiJMXModule extends AbstractModule{
         bind(Waitable.class).to(SystemWaitable.class);
         bind(MultiJMXArgumentParser.class).to(MultiJMXArgumentParserImpl.class);
         bind(ExpressionParser.class).to(SpelExpressionParser.class);
+        bind(ValueRetrieverService.class).to(ValueRetrieverServiceImpl.class);
     }
 }

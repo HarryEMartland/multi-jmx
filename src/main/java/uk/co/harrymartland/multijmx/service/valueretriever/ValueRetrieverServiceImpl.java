@@ -1,5 +1,6 @@
 package uk.co.harrymartland.multijmx.service.valueretriever;
 
+import com.google.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.expression.ExpressionParser;
 import uk.co.harrymartland.multijmx.domain.typeable.ObjectType;
@@ -14,6 +15,7 @@ public class ValueRetrieverServiceImpl implements ValueRetrieverService {
 
     private ExpressionParser expressionParser;
 
+    @Inject
     public ValueRetrieverServiceImpl(ExpressionParser expressionParser) {
         this.expressionParser = expressionParser;
     }

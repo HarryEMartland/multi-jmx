@@ -1,17 +1,14 @@
 package uk.co.harrymartland.multijmx.processer;
 
 import com.google.inject.Inject;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.expression.ExpressionParser;
 import uk.co.harrymartland.multijmx.domain.JMXConnectionResponse;
 import uk.co.harrymartland.multijmx.domain.MultiJMXOptions;
 import uk.co.harrymartland.multijmx.domain.connection.JMXConnection;
-import uk.co.harrymartland.multijmx.domain.typeable.Typeable;
-import uk.co.harrymartland.multijmx.domain.valueretriver.AttributeValueRetriever;
 import uk.co.harrymartland.multijmx.domain.valueretriver.JMXValueRetriever;
-import uk.co.harrymartland.multijmx.domain.valueretriver.SpelMethodValueRetriever;
 import uk.co.harrymartland.multijmx.jmxrunner.PasswordJmxRunner;
 import uk.co.harrymartland.multijmx.jmxrunner.RemoteJmxRunner;
+import uk.co.harrymartland.multijmx.service.valueretriever.ValueRetrieverService;
 
 import javax.management.ObjectName;
 import java.util.ArrayList;
@@ -28,10 +25,12 @@ import java.util.stream.Stream;
 public class MultiJMXProcessorImpl implements MultiJMXProcessor {
 
     private ExpressionParser expressionParser;
+    private ValueRetrieverService valueRetrieverService;
 
     @Inject
-    public MultiJMXProcessorImpl(ExpressionParser expressionParser) {
+    public MultiJMXProcessorImpl(ExpressionParser expressionParser, ValueRetrieverService valueRetrieverService) {
         this.expressionParser = expressionParser;
+        this.valueRetrieverService = valueRetrieverService;
     }
 
     @Override
@@ -101,50 +100,27 @@ public class MultiJMXProcessorImpl implements MultiJMXProcessor {
 
     private RemoteJmxRunner createJmxRunner(MultiJMXOptions options, JMXConnection connection) {
         if (options.isAuthenticationRequired()) {
-            return new PasswordJmxRunner(createJMXValueRetriever(options.getSignatures(), options.getObjectNames()), connection, options.getUsername(), options.getPassword());
+            return new PasswordJmxRunner(createJMXValueRetrievers(options.getSignatures(), options.getObjectNames()), connection, options.getUsername(), options.getPassword());
         } else {
-            return new RemoteJmxRunner(createJMXValueRetriever(options.getSignatures(), options.getObjectNames()), connection);
+            return new RemoteJmxRunner(createJMXValueRetrievers(options.getSignatures(), options.getObjectNames()), connection);
         }
     }
 
-    private List<JMXValueRetriever> createJMXValueRetriever(List<String> signatures, List<ObjectName> objectNames) {
+    private List<JMXValueRetriever> createJMXValueRetrievers(List<String> signatures, List<ObjectName> objectNames) {
 
         if (objectNames.size() == 1) {
             ObjectName objectName = objectNames.get(0);
-            return signatures.stream().map(signature -> createJMXValueRetriever(signature, objectName)).collect(Collectors.toList());
+            return signatures.stream().map(signature -> valueRetrieverService.createRetriever(objectName,signature)).collect(Collectors.toList());
         } else {
             Iterator<ObjectName> objectNameIterator = objectNames.iterator();
             Iterator<String> signatureIterator = signatures.iterator();
             List<JMXValueRetriever> jmxValueRetrievers = new ArrayList<>(objectNames.size());
 
             while (objectNameIterator.hasNext() && signatureIterator.hasNext()) {
-                jmxValueRetrievers.add(createJMXValueRetriever(signatureIterator.next(), objectNameIterator.next()));
+                jmxValueRetrievers.add(valueRetrieverService.createRetriever(objectNameIterator.next(), signatureIterator.next()));
             }
             return jmxValueRetrievers;
         }
-
     }
 
-    //todo refactor
-    private JMXValueRetriever createJMXValueRetriever(String signature, ObjectName objectName) {
-        if (signature.contains("(")) {
-
-
-            final int firstOpenBracket = signature.indexOf("(");
-            final String methodName = signature.substring(0, firstOpenBracket);
-            final String argumentsString = signature.substring(firstOpenBracket + 1, signature.length() - 1);
-            final String[] arguments = StringUtils.split(argumentsString, ",");
-            final Typeable[] argumentValues = new Typeable[arguments.length];
-
-            for (int i = 0; i < arguments.length; i++) {
-                String argument = arguments[i];
-                argumentValues[i] = (Typeable) expressionParser.parseExpression(argument).getValue();
-
-            }
-            return new SpelMethodValueRetriever(objectName, methodName, argumentValues);
-
-        } else {
-            return new AttributeValueRetriever(objectName, signature);
-        }
-    }
 }
