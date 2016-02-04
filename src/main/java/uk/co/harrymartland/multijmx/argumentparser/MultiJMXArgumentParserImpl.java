@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 
 public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
 
-    private static final String DELEMITER_DEFAULT = "\t";
+    private static final String DELIMITER_DEFAULT = "\t";
 
     private Options options = null;
 
@@ -43,7 +43,7 @@ public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
         multiJMXOptions.setPassword(cmd.getOptionValue("p"));//todo option names in public static field
         multiJMXOptions.setUsername(cmd.getOptionValue("u"));
         multiJMXOptions.setUrls(createConnections(cmd));
-        multiJMXOptions.setDelimiter(cmd.getOptionValue("d", DELEMITER_DEFAULT));
+        multiJMXOptions.setDelimiter(cmd.getOptionValue("d", DELIMITER_DEFAULT));
 
         return multiJMXOptions;
     }
