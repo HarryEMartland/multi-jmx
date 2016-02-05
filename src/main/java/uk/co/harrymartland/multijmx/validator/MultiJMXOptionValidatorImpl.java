@@ -7,6 +7,8 @@ import org.springframework.expression.ExpressionParser;
 
 import java.util.regex.Pattern;
 
+import static uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParserImpl.*;
+
 public class MultiJMXOptionValidatorImpl implements MultiJMXOptionValidator {
 
     ExpressionParser expressionParser;
@@ -25,7 +27,7 @@ public class MultiJMXOptionValidatorImpl implements MultiJMXOptionValidator {
     }
 
     private void validateMethodsAndAttributes(CommandLine commandLine) throws ValidationException {
-        for (String attribute : commandLine.getOptionValues("a")) {
+        for (String attribute : commandLine.getOptionValues(SIGNATURE_ARG)) {
             if (attribute.contains("(")) {
                 validateMethod(attribute);
             } else {
@@ -75,15 +77,15 @@ public class MultiJMXOptionValidatorImpl implements MultiJMXOptionValidator {
     }
 
     private void validateObjectsAndAttributesCount(CommandLine commandLine) throws ValidationException {
-        if (commandLine.getOptionValues("o").length > 1) {
-            if (commandLine.getOptionValues("o").length != commandLine.getOptionValues("a").length) {
+        if (commandLine.getOptionValues(OBJECT_NAME_ARG).length > 1) {
+            if (commandLine.getOptionValues(OBJECT_NAME_ARG).length != commandLine.getOptionValues(SIGNATURE_ARG).length) {
                 throw new ValidationException("Number of attributes and objects must match");
             }
         }
     }
 
     private void validateOrder(CommandLine commandLine) throws ValidationException {
-        if (commandLine.hasOption("c") && commandLine.hasOption("v")) {
+        if (commandLine.hasOption(ORDER_BY_CONNECTION_ARG) && commandLine.hasOption(ORDER_BY_VALUE_ARG)) {
             throw new ValidationException("Cannot order by connection and display");
         }
     }

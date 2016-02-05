@@ -26,6 +26,16 @@ import java.util.stream.Stream;
 public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
 
     private static final String DELIMITER_DEFAULT = "\t";
+    public static final String DELIMITER_ARG = "d";
+    public static final String USERNAME_ARG = "u";
+    public static final String PASSWORD_ARG = "p";
+    public static final String REVERSE_ORDER_ARG = "r";
+    public static final String ORDER_BY_VALUE_ARG = "v";
+    public static final String ORDER_BY_CONNECTION_ARG = "c";
+    public static final String OBJECT_NAME_ARG = "o";
+    public static final String SIGNATURE_ARG = "a";
+    public static final String CONNECTIONS_FILE_ARG = "f";
+    public static final String MAX_THREADS_ARG = "t";
 
     private Options options = null;
 
@@ -34,16 +44,16 @@ public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
 
         MultiJMXOptions multiJMXOptions = new MultiJMXOptions();
 
-        multiJMXOptions.setSignatures(Arrays.asList(cmd.getOptionValues("a")));
+        multiJMXOptions.setSignatures(Arrays.asList(cmd.getOptionValues(SIGNATURE_ARG)));
         multiJMXOptions.setMaxThreads(getMaxThreads(cmd));
-        multiJMXOptions.setObjectNames(createObjectNames(cmd.getOptionValues("o")));
-        multiJMXOptions.setOrderConnection(cmd.hasOption("c"));
-        multiJMXOptions.setOrderValue(cmd.hasOption("v"));
-        multiJMXOptions.setReverseOrder(cmd.hasOption("r"));
-        multiJMXOptions.setPassword(cmd.getOptionValue("p"));//todo option names in public static field
-        multiJMXOptions.setUsername(cmd.getOptionValue("u"));
+        multiJMXOptions.setObjectNames(createObjectNames(cmd.getOptionValues(OBJECT_NAME_ARG)));
+        multiJMXOptions.setOrderConnection(cmd.hasOption(ORDER_BY_CONNECTION_ARG));
+        multiJMXOptions.setOrderValue(cmd.hasOption(ORDER_BY_VALUE_ARG));
+        multiJMXOptions.setReverseOrder(cmd.hasOption(REVERSE_ORDER_ARG));
+        multiJMXOptions.setPassword(cmd.getOptionValue(PASSWORD_ARG));
+        multiJMXOptions.setUsername(cmd.getOptionValue(USERNAME_ARG));
         multiJMXOptions.setUrls(createConnections(cmd));
-        multiJMXOptions.setDelimiter(cmd.getOptionValue("d", DELIMITER_DEFAULT));
+        multiJMXOptions.setDelimiter(cmd.getOptionValue(DELIMITER_ARG, DELIMITER_DEFAULT));
 
         return multiJMXOptions;
     }
@@ -56,8 +66,8 @@ public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
 
         Stream<String> connectionStrings = cmd.getArgList().stream();
 
-        if (cmd.hasOption("f")) {
-            Stream<String> connectionsFromFile = loadConnectsFromFile(cmd.getOptionValue("f"));
+        if (cmd.hasOption(CONNECTIONS_FILE_ARG)) {
+            Stream<String> connectionsFromFile = loadConnectsFromFile(cmd.getOptionValue(CONNECTIONS_FILE_ARG));
             connectionStrings = Stream.concat(connectionsFromFile, connectionStrings);
         }
 
@@ -83,8 +93,8 @@ public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
     }
 
     private Integer getMaxThreads(CommandLine cmd) {
-        if (cmd.hasOption("t")) {
-            return Integer.parseInt(cmd.getOptionValue("t"));
+        if (cmd.hasOption(MAX_THREADS_ARG)) {
+            return Integer.parseInt(cmd.getOptionValue(MAX_THREADS_ARG));
         }
         return null;
     }
@@ -99,17 +109,17 @@ public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
 
     private Options createOptions() {
         Options options = new Options();
-        options.addOption("v", "order-value", false, "Order the results by value");
-        options.addOption("c", "order-connection", false, "Order the results by connection");
-        options.addOption("r", "reverse-order", false, "Order the results in reverse");
-        options.addOption("t", "max-threads", true, "Maximum number of threads (default unlimited)");
-        options.addOption(Option.builder("o").longOpt("object-name").argName("object name").required().hasArg().desc("JMX object name to read from e.g. 'java.lang:type=OperatingSystem'").build());
-        options.addOption(Option.builder("a").longOpt("attribute").argName("attribute").required().hasArg().desc("JMX attribute to read from e.g. 'AvailableProcessors'").build());
-        options.addOption("u", "username", true, "Username to connect to JMX server");
-        options.addOption("p", "password", true, "Password to connect to JMX server");
-        options.addOption("f", "file", true, "Read JMX connections from file");
-        options.addOption(Option.builder(HELP_SHORT_OPTION).longOpt(HELP_LONG_OPTION).hasArg(false).desc("Desplay help").build());
-        options.addOption(Option.builder("d").longOpt("delimiter").hasArg().numberOfArgs(1).desc("Delemiter used to split results").build());
+        options.addOption(ORDER_BY_VALUE_ARG, "order-value", false, "Order the results by value");
+        options.addOption(ORDER_BY_CONNECTION_ARG, "order-connection", false, "Order the results by connection");
+        options.addOption(REVERSE_ORDER_ARG, "reverse-order", false, "Order the results in reverse");
+        options.addOption(MAX_THREADS_ARG, "max-threads", true, "Maximum number of threads (default unlimited)");
+        options.addOption(Option.builder(OBJECT_NAME_ARG).longOpt("object-name").argName("object name").required().hasArg().desc("JMX object name to read from e.g. 'java.lang:type=OperatingSystem'").build());
+        options.addOption(Option.builder(SIGNATURE_ARG).longOpt("attribute").argName("attribute").required().hasArg().desc("JMX attribute to read from e.g. 'AvailableProcessors'").build());
+        options.addOption(USERNAME_ARG, "username", true, "Username to connect to JMX server");
+        options.addOption(PASSWORD_ARG, "password", true, "Password to connect to JMX server");
+        options.addOption(CONNECTIONS_FILE_ARG, "file", true, "Read JMX connections from file");
+        options.addOption(Option.builder(HELP_SHORT_OPTION).longOpt(HELP_LONG_OPTION).hasArg(false).desc("Display help").build());
+        options.addOption(Option.builder(DELIMITER_ARG).longOpt("delimiter").hasArg().numberOfArgs(1).desc("Delimiter used to split results").build());
         return options;
     }
 
