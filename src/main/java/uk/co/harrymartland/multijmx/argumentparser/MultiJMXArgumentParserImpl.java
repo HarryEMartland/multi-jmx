@@ -109,17 +109,17 @@ public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
 
     private Options createOptions() {
         Options options = new Options();
-        options.addOption(ORDER_BY_VALUE_ARG, "order-value", false, "Order the results by value");
-        options.addOption(ORDER_BY_CONNECTION_ARG, "order-connection", false, "Order the results by connection");
-        options.addOption(REVERSE_ORDER_ARG, "reverse-order", false, "Order the results in reverse");
-        options.addOption(MAX_THREADS_ARG, "max-threads", true, "Maximum number of threads (default unlimited)");
+        options.addOption(Option.builder(ORDER_BY_VALUE_ARG).longOpt("order-value").desc("Order the results by value").build());
+        options.addOption(Option.builder(ORDER_BY_CONNECTION_ARG).longOpt("order-connection").desc("Order the results by connection").build());
+        options.addOption(Option.builder(REVERSE_ORDER_ARG).longOpt("reverse-order").desc("Order the results in reverse").build());
+        options.addOption(Option.builder(MAX_THREADS_ARG).argName("max-threads").hasArg().argName("number of threads").desc("Maximum number of threads (default unlimited)").build());
         options.addOption(Option.builder(OBJECT_NAME_ARG).longOpt("object-name").argName("object name").required().hasArg().desc("JMX object name to read from e.g. 'java.lang:type=OperatingSystem'").build());
         options.addOption(Option.builder(SIGNATURE_ARG).longOpt("attribute").argName("attribute").required().hasArg().desc("JMX attribute to read from e.g. 'AvailableProcessors'").build());
-        options.addOption(USERNAME_ARG, "username", true, "Username to connect to JMX server");
-        options.addOption(PASSWORD_ARG, "password", true, "Password to connect to JMX server");
-        options.addOption(CONNECTIONS_FILE_ARG, "file", true, "Read JMX connections from file");
+        options.addOption(Option.builder(USERNAME_ARG).longOpt("username").hasArg().argName("username").desc("Username to connect to JMX server").build());
+        options.addOption(Option.builder(PASSWORD_ARG).longOpt("password").hasArg().argName("password").desc("Password to connect to JMX server").build());
+        options.addOption(Option.builder(CONNECTIONS_FILE_ARG).longOpt("file").hasArg().argName("file path").desc("Read JMX connections from file").build());
         options.addOption(Option.builder(HELP_SHORT_OPTION).longOpt(HELP_LONG_OPTION).hasArg(false).desc("Display help").build());
-        options.addOption(Option.builder(DELIMITER_ARG).longOpt("delimiter").hasArg().numberOfArgs(1).desc("Delimiter used to split results").build());
+        options.addOption(Option.builder(DELIMITER_ARG).longOpt("delimiter").hasArg().numberOfArgs(1).argName("delimiter").desc("Delimiter used to split results").build());
         return options;
     }
 
