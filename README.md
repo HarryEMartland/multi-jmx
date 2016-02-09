@@ -11,11 +11,18 @@ To specify a literal type wrap the value in one of the wrappers below.
 
 ## Literal arguments
 To specify a literal argument the following wrappers can be used.
-* IntType
-* LongType
+* BooleanType(Boolean value)
+* CharType(Character value)
+* DoubleType(Double value)
+* FloatType(Double value)
+* IntType(Integer value)
+* LongType(Long value)
+* NullType(Class type)
 
 e.g.
 ``methodName(new IntType(32))``
+
+note: when using the null type use the full canonical name for the class and use the SpEL expression ``T(<class name>)``.
 
 ## Multiple values
 It is possible to request multiple values from the same or different MBeans.
