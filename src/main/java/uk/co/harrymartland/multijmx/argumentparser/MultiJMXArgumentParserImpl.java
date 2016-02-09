@@ -112,7 +112,7 @@ public class MultiJMXArgumentParserImpl implements MultiJMXArgumentParser {
         options.addOption(Option.builder(ORDER_BY_VALUE_ARG).longOpt("order-value").desc("Order the results by value").build());
         options.addOption(Option.builder(ORDER_BY_CONNECTION_ARG).longOpt("order-connection").desc("Order the results by connection").build());
         options.addOption(Option.builder(REVERSE_ORDER_ARG).longOpt("reverse-order").desc("Order the results in reverse").build());
-        options.addOption(Option.builder(MAX_THREADS_ARG).argName("max-threads").hasArg().argName("number of threads").desc("Maximum number of threads (default unlimited)").build());
+        options.addOption(Option.builder(MAX_THREADS_ARG).longOpt("max-threads").hasArg().argName("number of threads").desc("Maximum number of threads (default unlimited)").build());
         options.addOption(Option.builder(OBJECT_NAME_ARG).longOpt("object-name").argName("object name").required().hasArg().desc("JMX object name to read from e.g. 'java.lang:type=OperatingSystem'").build());
         options.addOption(Option.builder(SIGNATURE_ARG).longOpt("attribute").argName("attribute").required().hasArg().desc("JMX attribute to read from e.g. 'AvailableProcessors'").build());
         options.addOption(Option.builder(USERNAME_ARG).longOpt("username").hasArg().argName("username").desc("Username to connect to JMX server").build());
