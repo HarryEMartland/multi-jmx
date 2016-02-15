@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import uk.co.harrymartland.multijmx.domain.MultiJMXOptions;
 import uk.co.harrymartland.multijmx.domain.connection.JMXConnection;
+import uk.co.harrymartland.multijmx.service.connection.ConnectionServiceImpl;
 
 import javax.management.ObjectName;
 import javax.management.remote.JMXServiceURL;
@@ -19,34 +20,34 @@ public class MultiJMXArgumentParserImplTest {
 
     private final String VALID_OBJECT_NAME = "java.lang:type=OperatingSystem";
 
-    private final MultiJMXArgumentParser multiJMXArgumentParser = new MultiJMXArgumentParserImpl();
+    private final MultiJMXArgumentParser multiJMXArgumentParser = new MultiJMXArgumentParserImpl(new ConnectionServiceImpl());
 
     @org.junit.Test
     public void testShouldRequireObjectNameAndAttributeShortName() throws Exception {
-        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(arguments("-o " + VALID_OBJECT_NAME + " -a attribute"));
+        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(arguments("-o " + VALID_OBJECT_NAME + " -a signature"));
         Assert.assertEquals(Collections.singletonList(new ObjectName(VALID_OBJECT_NAME)), multiJMXOptions.getObjectNames());
-        Assert.assertEquals(Collections.singletonList("attribute"), multiJMXOptions.getSignatures());
+        Assert.assertEquals(Collections.singletonList("signature"), multiJMXOptions.getSignatures());
     }
 
     @org.junit.Test
     public void testShouldReturnMultipleAttributesAndObjectsShortName() throws Exception {
-        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(arguments("-o " + VALID_OBJECT_NAME + " -a attribute -o " + VALID_OBJECT_NAME + " -a attribute -o " + VALID_OBJECT_NAME + " -a attribute"));
+        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(arguments("-o " + VALID_OBJECT_NAME + " -a signature -o " + VALID_OBJECT_NAME + " -a signature -o " + VALID_OBJECT_NAME + " -a signature"));
         Assert.assertEquals(Arrays.asList(new ObjectName(VALID_OBJECT_NAME), new ObjectName(VALID_OBJECT_NAME), new ObjectName(VALID_OBJECT_NAME)), multiJMXOptions.getObjectNames());
-        Assert.assertEquals(Arrays.asList("attribute", "attribute", "attribute"), multiJMXOptions.getSignatures());
+        Assert.assertEquals(Arrays.asList("signature", "signature", "signature"), multiJMXOptions.getSignatures());
     }
 
     @org.junit.Test
     public void testShouldReturnMultipleAttributesAndObjectsLongName() throws Exception {
-        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(arguments("-object-name " + VALID_OBJECT_NAME + " -attribute attribute -object-name " + VALID_OBJECT_NAME + " -attribute attribute -object-name " + VALID_OBJECT_NAME + " -attribute attribute"));
+        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(arguments("-object-name " + VALID_OBJECT_NAME + " -signature signature -object-name " + VALID_OBJECT_NAME + " -signature signature -object-name " + VALID_OBJECT_NAME + " -signature signature"));
         Assert.assertEquals(Arrays.asList(new ObjectName(VALID_OBJECT_NAME), new ObjectName(VALID_OBJECT_NAME), new ObjectName(VALID_OBJECT_NAME)), multiJMXOptions.getObjectNames());
-        Assert.assertEquals(Arrays.asList("attribute", "attribute", "attribute"), multiJMXOptions.getSignatures());
+        Assert.assertEquals(Arrays.asList("signature", "signature", "signature"), multiJMXOptions.getSignatures());
     }
 
     @org.junit.Test
     public void testShouldRequireObjectNameAndAttributeLongName() throws Exception {
-        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(arguments("-object-name " + VALID_OBJECT_NAME + " -attribute attribute"));
+        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(arguments("-object-name " + VALID_OBJECT_NAME + " -signature signature"));
         Assert.assertEquals(Collections.singletonList(new ObjectName(VALID_OBJECT_NAME)), multiJMXOptions.getObjectNames());
-        Assert.assertEquals(Collections.singletonList("attribute"), multiJMXOptions.getSignatures());
+        Assert.assertEquals(Collections.singletonList("signature"), multiJMXOptions.getSignatures());
     }
 
     @org.junit.Test(expected = ParseException.class)
@@ -56,7 +57,7 @@ public class MultiJMXArgumentParserImplTest {
 
     @org.junit.Test(expected = ParseException.class)
     public void testShouldThrowExceptionWhenObjectNameNotPassed() throws Exception {
-        multiJMXArgumentParser.parseArguments(arguments("-attribute attribute"));
+        multiJMXArgumentParser.parseArguments(arguments("-signature signature"));
     }
 
     @Test
@@ -94,7 +95,7 @@ public class MultiJMXArgumentParserImplTest {
 
     @Test
     public void testShouldReturnOrderConnectionLongName() throws Exception {
-        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(addToWorkingArgumentString("-order-connection"));
+        MultiJMXOptions multiJMXOptions = multiJMXArgumentParser.parseArguments(addToWorkingArgumentString("-order-connectionarg"));
         Assert.assertTrue(multiJMXOptions.isOrderConnection());
         Assert.assertTrue(multiJMXOptions.isOrdered());
     }
@@ -202,7 +203,7 @@ public class MultiJMXArgumentParserImplTest {
 
     //todo tidy up and use array of strings rather than one string
     private CommandLine addToWorkingArgumentString(String toAdd) throws ParseException {
-        return arguments("-o " + VALID_OBJECT_NAME + " -a attribute " + toAdd);
+        return arguments("-o " + VALID_OBJECT_NAME + " -a signature " + toAdd);
     }
 
     private CommandLine arguments(String string) throws ParseException {

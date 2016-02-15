@@ -6,6 +6,7 @@ import uk.co.harrymartland.multijmx.domain.connection.JMXConnection;
 import uk.co.harrymartland.multijmx.domain.valueretriver.JMXValueRetriever;
 
 import javax.management.MBeanServerConnection;
+import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import java.util.ArrayList;
@@ -17,28 +18,35 @@ import java.util.concurrent.Callable;
 public abstract class AbstractJmxRunner implements Callable<JMXConnectionResponse> {
 
     private final List<JMXValueRetriever> jmxValueRetrievers;
+    private final List<ObjectName> objectNames;
     private final JMXConnection jmxConnection;
 
-    public AbstractJmxRunner(List<JMXValueRetriever> jmxValueRetrievers, JMXConnection jmxConnection) {
+    public AbstractJmxRunner(List<JMXValueRetriever> jmxValueRetrievers, List<ObjectName> objectNames, JMXConnection jmxConnection) {
         this.jmxValueRetrievers = jmxValueRetrievers;
+        this.objectNames = objectNames;
         this.jmxConnection = jmxConnection;
     }
 
-    public JMXConnectionResponse call() throws Exception {
+    public JMXConnectionResponse call() throws Exception {//todo refactor
         try {
             JMXConnector jmxc = JMXConnectorFactory.connect(jmxConnection.getJmxServiceURL(), getEnv());
             MBeanServerConnection mBeanServerConnection = jmxc.getMBeanServerConnection();
 
             Iterator<JMXValueRetriever> jmxValueRetrieverIterator = jmxValueRetrievers.iterator();
+            Iterator<ObjectName> objectNameIterator = objectNames.iterator();
 
             List<JMXValueResult> values = new ArrayList<>(jmxValueRetrievers.size());
-
+            ObjectName objectName = objectNameIterator.next();
             while (jmxValueRetrieverIterator.hasNext()) {
 
                 try {
-                    values.add(new JMXValueResult(jmxValueRetrieverIterator.next().getValue(mBeanServerConnection)));
+                    values.add(new JMXValueResult(jmxValueRetrieverIterator.next().getValue(mBeanServerConnection, objectName)));
                 } catch (Exception e) {
                     values.add(new JMXValueResult(e));
+                }
+
+                if (objectNameIterator.hasNext()) {
+                    objectName = objectNameIterator.next();
                 }
             }
             return new JMXConnectionResponse(jmxConnection.getDisplay(), values);

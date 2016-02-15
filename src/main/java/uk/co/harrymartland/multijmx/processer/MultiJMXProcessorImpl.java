@@ -10,10 +10,7 @@ import uk.co.harrymartland.multijmx.jmxrunner.PasswordJmxRunner;
 import uk.co.harrymartland.multijmx.jmxrunner.RemoteJmxRunner;
 import uk.co.harrymartland.multijmx.service.valueretriever.ValueRetrieverService;
 
-import javax.management.ObjectName;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -100,27 +97,14 @@ public class MultiJMXProcessorImpl implements MultiJMXProcessor {
 
     private RemoteJmxRunner createJmxRunner(MultiJMXOptions options, JMXConnection connection) {
         if (options.isAuthenticationRequired()) {
-            return new PasswordJmxRunner(createJMXValueRetrievers(options.getSignatures(), options.getObjectNames()), connection, options.getUsername(), options.getPassword());
+            return new PasswordJmxRunner(createJMXValueRetrievers(options.getSignatures()), options.getObjectNames(), connection, options.getUsername(), options.getPassword());
         } else {
-            return new RemoteJmxRunner(createJMXValueRetrievers(options.getSignatures(), options.getObjectNames()), connection);
+            return new RemoteJmxRunner(createJMXValueRetrievers(options.getSignatures()), options.getObjectNames(), connection);
         }
     }
 
-    private List<JMXValueRetriever> createJMXValueRetrievers(List<String> signatures, List<ObjectName> objectNames) {
-
-        if (objectNames.size() == 1) {
-            ObjectName objectName = objectNames.get(0);
-            return signatures.stream().map(signature -> valueRetrieverService.createRetriever(objectName,signature)).collect(Collectors.toList());
-        } else {
-            Iterator<ObjectName> objectNameIterator = objectNames.iterator();
-            Iterator<String> signatureIterator = signatures.iterator();
-            List<JMXValueRetriever> jmxValueRetrievers = new ArrayList<>(objectNames.size());
-
-            while (objectNameIterator.hasNext() && signatureIterator.hasNext()) {
-                jmxValueRetrievers.add(valueRetrieverService.createRetriever(objectNameIterator.next(), signatureIterator.next()));
-            }
-            return jmxValueRetrievers;
-        }
+    private List<JMXValueRetriever> createJMXValueRetrievers(List<String> signatures) {
+        return signatures.stream().map(signature -> valueRetrieverService.createRetriever(signature)).collect(Collectors.toList());
     }
 
 }

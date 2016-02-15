@@ -11,6 +11,8 @@ import uk.co.harrymartland.multijmx.domain.lifecycle.LifeCycleController;
 import uk.co.harrymartland.multijmx.domain.lifecycle.LifeCycleControllerImpl;
 import uk.co.harrymartland.multijmx.processer.MultiJMXProcessor;
 import uk.co.harrymartland.multijmx.processer.MultiJMXProcessorImpl;
+import uk.co.harrymartland.multijmx.service.connection.ConnectionService;
+import uk.co.harrymartland.multijmx.service.connection.ConnectionServiceImpl;
 import uk.co.harrymartland.multijmx.service.valueretriever.ValueRetrieverService;
 import uk.co.harrymartland.multijmx.service.valueretriever.ValueRetrieverServiceImpl;
 import uk.co.harrymartland.multijmx.validator.MultiJMXOptionValidator;
@@ -30,9 +32,9 @@ public class MultiJMXModule extends AbstractModule{
         bind(Writer.class).to(SystemOutWriter.class);
         bind(Waitable.class).to(SystemWaitable.class);
         bind(MultiJMXArgumentParser.class).to(MultiJMXArgumentParserImpl.class);
-        bind(ExpressionParser.class).to(SpelExpressionParser.class);
         bind(ValueRetrieverService.class).to(ValueRetrieverServiceImpl.class);
         bind(LifeCycleController.class).to(LifeCycleControllerImpl.class);
+        bind(ConnectionService.class).to(ConnectionServiceImpl.class);
 
         Multibinder<LifeCycleAble> lifeCycleAbleMultibinder = Multibinder.newSetBinder(binder(), LifeCycleAble.class);
         lifeCycleAbleMultibinder.addBinding().to(SystemWaitable.class);

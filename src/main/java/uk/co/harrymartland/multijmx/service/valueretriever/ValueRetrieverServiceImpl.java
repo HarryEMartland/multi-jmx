@@ -9,8 +9,6 @@ import uk.co.harrymartland.multijmx.domain.valueretriver.AttributeValueRetriever
 import uk.co.harrymartland.multijmx.domain.valueretriver.JMXValueRetriever;
 import uk.co.harrymartland.multijmx.domain.valueretriver.SpelMethodValueRetriever;
 
-import javax.management.ObjectName;
-
 public class ValueRetrieverServiceImpl implements ValueRetrieverService {
 
     private ExpressionParser expressionParser;
@@ -21,19 +19,19 @@ public class ValueRetrieverServiceImpl implements ValueRetrieverService {
     }
 
     @Override
-    public JMXValueRetriever createRetriever(ObjectName objectName, String signature) {
+    public JMXValueRetriever createRetriever(String signature) {
         if (signature.contains("(")) {
-            return createMethodValueRetriever(objectName, signature);
+            return createMethodValueRetriever(signature);
         } else {
-            return createAttributeValueRetriever(objectName, signature);
+            return createAttributeValueRetriever(signature);
         }
     }
 
-    private JMXValueRetriever createAttributeValueRetriever(ObjectName objectName, String signature) {
-        return new AttributeValueRetriever(objectName, signature);
+    private JMXValueRetriever createAttributeValueRetriever(String signature) {
+        return new AttributeValueRetriever(signature);
     }
 
-    private JMXValueRetriever createMethodValueRetriever(ObjectName objectName, String signature) {
+    private JMXValueRetriever createMethodValueRetriever(String signature) {
         final int firstOpenBracket = signature.indexOf("(");
         final String methodName = signature.substring(0, firstOpenBracket);
         final String argumentsString = signature.substring(firstOpenBracket + 1, signature.length() - 1);
@@ -49,6 +47,6 @@ public class ValueRetrieverServiceImpl implements ValueRetrieverService {
                 argumentValues[i] = new ObjectType(returnedValue);
             }
         }
-        return new SpelMethodValueRetriever(objectName, methodName, argumentValues);
+        return new SpelMethodValueRetriever(methodName, argumentValues);
     }
 }

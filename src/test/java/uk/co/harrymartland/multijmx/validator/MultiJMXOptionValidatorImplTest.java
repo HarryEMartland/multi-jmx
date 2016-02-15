@@ -8,18 +8,19 @@ import org.junit.Test;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParser;
 import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParserImpl;
+import uk.co.harrymartland.multijmx.service.connection.ConnectionServiceImpl;
 
 public class MultiJMXOptionValidatorImplTest {
 
     private final String VALID_OBJECT_NAME = "java.lang:type=OperatingSystem";
 
     private MultiJMXOptionValidator multiJMXOptionValidator = new MultiJMXOptionValidatorImpl(new SpelExpressionParser());
-    private MultiJMXArgumentParser multiJMXArgumentParser = new MultiJMXArgumentParserImpl();
+    private MultiJMXArgumentParser multiJMXArgumentParser = new MultiJMXArgumentParserImpl(new ConnectionServiceImpl());
 
     @Test
     public void testShouldThrowExceptionWhenOrderByValueAndConnection() throws Exception {
         assertExceptionThrown(createCommandLine("-o", VALID_OBJECT_NAME, "-a", "att1", "-v", "-c"),
-                "Cannot order by connection and display");
+                "Cannot order by connectionarg and display");
     }
 
     @Test

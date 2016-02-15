@@ -8,17 +8,23 @@ import org.apache.commons.cli.ParseException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
 import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParser;
 import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParserImpl;
 import uk.co.harrymartland.multijmx.domain.JMXConnectionResponse;
 import uk.co.harrymartland.multijmx.domain.JMXValueResult;
 import uk.co.harrymartland.multijmx.domain.MultiJMXOptions;
+import uk.co.harrymartland.multijmx.module.ArgumentModule;
 import uk.co.harrymartland.multijmx.processer.MultiJMXProcessor;
+import uk.co.harrymartland.multijmx.service.connection.ConnectionService;
+import uk.co.harrymartland.multijmx.service.connection.ConnectionServiceImpl;
+import uk.co.harrymartland.multijmx.service.file.FileReaderService;
+import uk.co.harrymartland.multijmx.service.file.FileReaderServiceImpl;
 import uk.co.harrymartland.multijmx.validator.MultiJMXOptionValidator;
 import uk.co.harrymartland.multijmx.waitable.Waitable;
 import uk.co.harrymartland.multijmx.writer.Writer;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -41,18 +47,21 @@ public class MainTest {
         Guice.createInjector(new AbstractModule() {
             @Override
             protected void configure() {
+                bind(ExpressionParser.class).to(SpelExpressionParser.class);
                 bind(MultiJMXOptionValidator.class).toInstance(commandLine -> commandLine);
                 bind(MultiJMXProcessor.class).toInstance(multiJMXOptions -> mockResponses.stream());
                 bind(Writer.class).toInstance(retreivableWriter);
-                bind(MultiJMXArgumentParser.class).toInstance(new MultiJMXArgumentParserImpl() {
+                bind(ConnectionService.class).to(ConnectionServiceImpl.class);
+                bind(MultiJMXArgumentParser.class).toInstance(new MultiJMXArgumentParserImpl(new ConnectionServiceImpl()) {
                     @Override
                     public MultiJMXOptions parseArguments(CommandLine cmd) throws ParseException {
                         return multiJMXOptions;
                     }
                 });
                 bind(Waitable.class).to(NoWait.class);
+                bind(FileReaderService.class).to(FileReaderServiceImpl.class);
             }
-        }).injectMembers(this);
+        }, new ArgumentModule()).injectMembers(this);
 
     }
 
@@ -73,26 +82,26 @@ public class MainTest {
 
     @Test
     public void testIsDisplayHelpAttributeOption() throws Exception {
-        Assert.assertFalse(main.isDisplayHelp(new String[]{"-a", "attribute"}));
+        Assert.assertFalse(main.isDisplayHelp(new String[]{"-a", "signature"}));
     }
 
     @Test
     public void testIsDisplayHelpAttributeAndHelpOption() throws Exception {
-        Assert.assertTrue(main.isDisplayHelp(new String[]{"-a", "attribute", "-h"}));
+        Assert.assertTrue(main.isDisplayHelp(new String[]{"-a", "signature", "-h"}));
     }
 
     @Test
     public void testIsDisplayHelpHelpAndAttributeOption() throws Exception {
-        Assert.assertTrue(main.isDisplayHelp(new String[]{"-h", "-a", "attribute"}));
+        Assert.assertTrue(main.isDisplayHelp(new String[]{"-h", "-a", "signature"}));
     }
 
     @Test
     public void testShouldDisplayResult() throws Exception {
         multiJMXOptions = new MultiJMXOptions();
         multiJMXOptions.setDelimiter(" ");
-        mockResponses = Collections.singletonList(createConnectionResponse("connection", createValueResult(3)));
+        mockResponses = Collections.singletonList(createConnectionResponse("connectionarg", createValueResult(3)));
         main.run(VALID_ARGS);
-        Assert.assertEquals("connection 3\n", retreivableWriter.getValue());
+        Assert.assertEquals("connectionarg 3\n", retreivableWriter.getValue());
     }
 
     @Test
@@ -100,18 +109,18 @@ public class MainTest {
         multiJMXOptions = new MultiJMXOptions();
         multiJMXOptions.setDelimiter(" ");
         Exception exception = new Exception("exception message");
-        mockResponses = Collections.singletonList(createConnectionResponse("connection", createValueResult(4), createValueResult(exception)));
+        mockResponses = Collections.singletonList(createConnectionResponse("connectionarg", createValueResult(4), createValueResult(exception)));
         main.run(VALID_ARGS);
-        Assert.assertEquals("connection 4 exception message\nErrors have occurred (1)\nPress enter to see next stack trace\n" + getStackTrace(exception) + "\n", retreivableWriter.getValue());
+        Assert.assertEquals("connectionarg 4 exception message\nErrors have occurred (1)\nPress enter to see next stack trace\n" + getStackTrace(exception) + "\n", retreivableWriter.getValue());
     }
 
     @Test
     public void testShouldDisplayMultipleResults() throws Exception {
         multiJMXOptions = new MultiJMXOptions();
         multiJMXOptions.setDelimiter(" ");
-        mockResponses = Collections.singletonList(createConnectionResponse("connection", createValueResult(3), createValueResult(4)));
+        mockResponses = Collections.singletonList(createConnectionResponse("connectionarg", createValueResult(3), createValueResult(4)));
         main.run(VALID_ARGS);
-        Assert.assertEquals("connection 3 4\n", retreivableWriter.getValue());
+        Assert.assertEquals("connectionarg 3 4\n", retreivableWriter.getValue());
     }
 
     @Test
@@ -120,12 +129,12 @@ public class MainTest {
         multiJMXOptions.setDelimiter(" ");
 
         mockResponses = Arrays.asList(
-                createConnectionResponse("connection", createValueResult(3)),
+                createConnectionResponse("connectionarg", createValueResult(3)),
                 createConnectionResponse("connection2", createValueResult(4)));
 
         main.run(VALID_ARGS);
 
-        Assert.assertEquals("connection 3\nconnection2 4\n", retreivableWriter.getValue());
+        Assert.assertEquals("connectionarg 3\nconnection2 4\n", retreivableWriter.getValue());
     }
 
     @Test
@@ -133,10 +142,10 @@ public class MainTest {
         multiJMXOptions = new MultiJMXOptions();
         multiJMXOptions.setDelimiter(" ");
         Exception exception = new Exception("exception message");
-        mockResponses = Collections.singletonList(createConnectionResponse("connection", exception));
+        mockResponses = Collections.singletonList(createConnectionResponse("connectionarg", exception));
         main.run(VALID_ARGS);
 
-        Assert.assertEquals("connection ERROR (exception message)\nErrors have occurred (1)\nPress enter to see next stack trace\n" + getStackTrace(exception) + "\n",
+        Assert.assertEquals("connectionarg ERROR (exception message)\nErrors have occurred (1)\nPress enter to see next stack trace\n" + getStackTrace(exception) + "\n",
                 retreivableWriter.getValue());
     }
 

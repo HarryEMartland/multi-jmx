@@ -86,7 +86,7 @@ public class MultiJMXOptionValidatorImpl implements MultiJMXOptionValidator {
 
     private void validateOrder(CommandLine commandLine) throws ValidationException {
         if (commandLine.hasOption(ORDER_BY_CONNECTION_ARG) && commandLine.hasOption(ORDER_BY_VALUE_ARG)) {
-            throw new ValidationException("Cannot order by connection and display");
+            throw new ValidationException("Cannot order by connectionarg and display");
         }
     }
 

@@ -4,7 +4,6 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.ParseException;
 import uk.co.harrymartland.multijmx.argumentparser.MultiJMXArgumentParser;
@@ -12,8 +11,11 @@ import uk.co.harrymartland.multijmx.domain.JMXConnectionResponse;
 import uk.co.harrymartland.multijmx.domain.JMXValueResult;
 import uk.co.harrymartland.multijmx.domain.MultiJMXOptions;
 import uk.co.harrymartland.multijmx.domain.lifecycle.LifeCycleController;
+import uk.co.harrymartland.multijmx.module.ArgumentModule;
 import uk.co.harrymartland.multijmx.module.MultiJMXModule;
 import uk.co.harrymartland.multijmx.processer.MultiJMXProcessor;
+import uk.co.harrymartland.multijmx.service.commandline.CommandLineService;
+import uk.co.harrymartland.multijmx.service.validator.ValidatorService;
 import uk.co.harrymartland.multijmx.validator.MultiJMXOptionValidator;
 import uk.co.harrymartland.multijmx.validator.ValidationException;
 import uk.co.harrymartland.multijmx.waitable.Waitable;
@@ -35,20 +37,24 @@ public class Main {
     private MultiJMXProcessor multiJMXProcessor;
     private Writer writer;
     private Waitable waitable;
+    private CommandLineService commandLineService;
+    private ValidatorService validatorService;
 
     @Inject
     public Main(MultiJMXArgumentParser multiJMXArgumentParser, MultiJMXOptionValidator multiJMXOptionValidator,
-                MultiJMXProcessor multiJMXProcessor, Writer writer, Waitable waitable) {
+                MultiJMXProcessor multiJMXProcessor, Writer writer, Waitable waitable, CommandLineService commandLineService, ValidatorService validatorService) {
 
         this.multiJMXArgumentParser = multiJMXArgumentParser;
         this.multiJMXOptionValidator = multiJMXOptionValidator;
         this.multiJMXProcessor = multiJMXProcessor;
         this.writer = writer;
         this.waitable = waitable;
+        this.commandLineService = commandLineService;
+        this.validatorService = validatorService;
     }
 
     public static void main(String[] args) throws ParseException, ValidationException {
-        Injector injector = Guice.createInjector(new MultiJMXModule());
+        Injector injector = Guice.createInjector(new MultiJMXModule(), new ArgumentModule());
         Main main = injector.getInstance(Main.class);
         LifeCycleController lifeCycleController = injector.getInstance(LifeCycleController.class);
         try {
@@ -66,8 +72,9 @@ public class Main {
         }
         if (args.length > 0) {
 
-            CommandLine commandLine = new DefaultParser().parse(multiJMXArgumentParser.getOptions(), args);
-            multiJMXOptionValidator.validate(commandLine);
+            CommandLine commandLine = commandLineService.create(args);
+
+            validatorService.validate();
 
             MultiJMXOptions jmxOptions = multiJMXArgumentParser.parseArguments(commandLine);
             List<Exception> errors = multiJMXProcessor.run(jmxOptions)
