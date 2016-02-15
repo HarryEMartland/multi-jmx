@@ -1,4 +1,6 @@
 # Multi-JMX
+**Continuous Integration:** [![wercker status](https://app.wercker.com/status/e7b9fd49750cf96037dcbd3b0bda6c3d/s/master "wercker status")](https://app.wercker.com/project/bykey/e7b9fd49750cf96037dcbd3b0bda6c3d)
+
 JMX client for multiple connections.
 
 This command line tool allows you to connect to multiple MBean servers at once and compare the results from multiple MBeans.
