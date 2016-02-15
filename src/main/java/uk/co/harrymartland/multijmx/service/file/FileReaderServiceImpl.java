@@ -11,7 +11,6 @@ public class FileReaderServiceImpl implements FileReaderService {
         return Files.readAllLines(path);
     }
 
-    //todo test
     @Override
     public boolean exists(Path file) {
         return Files.exists(file);
