@@ -39,6 +39,4 @@ public class MaxThreadsOptionValueImplTest extends AbstractSingleOptionValueTest
         return "Max threads specified twice";
     }
 
-    //todo connectionarg option value
-    //todo connectionarg has to be one
 }

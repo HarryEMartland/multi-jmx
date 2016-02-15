@@ -131,7 +131,7 @@ public class OptionsServiceImplTest {
     public void testShouldNotHaveConnectionOptionValue() throws Exception {
         for (Option option : optionsService.getOptions().getOptions()) {
             Assert.assertNotEquals(connectionArgOptionValue.getOption(), option);
-        }//todo test validator has all options when validated
+        }
     }
 
     @Test
