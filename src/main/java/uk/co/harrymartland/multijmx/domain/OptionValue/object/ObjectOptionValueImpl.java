@@ -44,11 +44,12 @@ public class ObjectOptionValueImpl extends AbstractMultiOptionValue<List<ObjectN
     }
 
     @Override
-    public void validate() throws ValidationException {
+    public boolean validate() throws ValidationException {
         super.validate();
         for (String objectName : getStringValues()) {
             validateObjectName(objectName);
         }
+        return true;
     }
 
     @Override

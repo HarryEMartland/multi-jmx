@@ -20,11 +20,12 @@ public class MaxThreadsOptionValueImpl extends AbstractSingleOptionValue<Integer
     }
 
     @Override
-    public void validate() throws ValidationException {
+    public boolean validate() throws ValidationException {
         super.validate();
         if (hasOption() && !NumberUtils.isParsable(getStringValue())) {
             throw new ValidationException("Could not parse max threads: " + getStringValue());
         }
+        return true;
     }
 
     @Override
