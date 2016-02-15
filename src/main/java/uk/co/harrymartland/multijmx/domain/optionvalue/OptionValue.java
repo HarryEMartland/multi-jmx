@@ -9,4 +9,8 @@ public interface OptionValue<T> {
     boolean validate() throws ValidationException;
 
     T getValue();
+
+    int getNumberOfValues();
+
+    String getArg();
 }

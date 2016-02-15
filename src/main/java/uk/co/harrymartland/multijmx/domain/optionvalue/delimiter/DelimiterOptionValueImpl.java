@@ -18,7 +18,7 @@ public class DelimiterOptionValueImpl extends AbstractSingleOptionValue<String> 
     }
 
     @Override
-    protected String getArg() {
+    public String getArg() {
         return "d";
     }
 

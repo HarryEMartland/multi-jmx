@@ -38,7 +38,7 @@ public class ConnectionFileOptionValueImpl extends AbstractSingleOptionValue<Lis
     }
 
     @Override
-    protected String getArg() {
+    public String getArg() {
         return "f";
     }
 

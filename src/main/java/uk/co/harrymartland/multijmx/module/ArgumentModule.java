@@ -5,6 +5,8 @@ import com.google.inject.multibindings.Multibinder;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import uk.co.harrymartland.multijmx.domain.optionvalue.OptionValue;
+import uk.co.harrymartland.multijmx.domain.optionvalue.connection.ConnectionOptionValue;
+import uk.co.harrymartland.multijmx.domain.optionvalue.connection.ConnectionOptionValueImpl;
 import uk.co.harrymartland.multijmx.domain.optionvalue.connectionarg.ConnectionArgOptionValue;
 import uk.co.harrymartland.multijmx.domain.optionvalue.connectionarg.ConnectionArgOptionValueImpl;
 import uk.co.harrymartland.multijmx.domain.optionvalue.connectionfile.ConnectionFileOptionValue;
@@ -60,6 +62,7 @@ public class ArgumentModule extends AbstractModule {
         bindOptionValue(ConnectionArgOptionValue.class, ConnectionArgOptionValueImpl.class);
         bindOptionValue(ConnectionFileOptionValue.class, ConnectionFileOptionValueImpl.class);
         bindOptionValue(HelpOptionValue.class, HelpOptionValueImpl.class);
+        bindOptionValue(ConnectionOptionValue.class, ConnectionOptionValueImpl.class);
     }
 
     private Multibinder<OptionValue> getOptionBinder() {

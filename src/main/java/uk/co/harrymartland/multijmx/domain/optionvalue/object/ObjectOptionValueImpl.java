@@ -23,7 +23,7 @@ public class ObjectOptionValueImpl extends AbstractMultiOptionValue<List<ObjectN
     }
 
     @Override
-    protected String getArg() {
+    public String getArg() {
         return "o";
     }
 

@@ -15,7 +15,7 @@ public class ReverseOrderOptionValueImpl extends AbstractSingleOptionValue<Boole
     }
 
     @Override
-    protected String getArg() {
+    public String getArg() {
         return "r";
     }
 

@@ -34,7 +34,7 @@ import static uk.co.harrymartland.multijmx.ExceptionUtils.getStackTrace;
 public class MainTest {
 
     private final String VALID_OBJECT_NAME = "java.lang:type=OperatingSystem";
-    private final String[] VALID_ARGS = {"-o", VALID_OBJECT_NAME, "-a", "att"};
+    private final String[] VALID_ARGS = {"-o", VALID_OBJECT_NAME, "-a", "att", "validConnection"};
 
     @Inject
     private Main main;

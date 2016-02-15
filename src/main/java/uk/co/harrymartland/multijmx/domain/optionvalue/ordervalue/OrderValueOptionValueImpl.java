@@ -25,7 +25,7 @@ public class OrderValueOptionValueImpl extends AbstractSingleOptionValue<Boolean
     }
 
     @Override
-    protected String getArg() {
+    public String getArg() {
         return "v";
     }
 

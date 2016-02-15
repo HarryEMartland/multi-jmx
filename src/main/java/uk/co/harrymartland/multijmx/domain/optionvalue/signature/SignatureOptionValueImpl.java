@@ -33,7 +33,7 @@ public class SignatureOptionValueImpl extends AbstractMultiOptionValue<List<JMXV
     }
 
     @Override
-    protected String getArg() {
+    public String getArg() {
         return "a";
     }
 

@@ -29,7 +29,7 @@ public class MaxThreadsOptionValueImpl extends AbstractSingleOptionValue<Integer
     }
 
     @Override
-    protected String getArg() {
+    public String getArg() {
         return "t";
     }
 

@@ -22,7 +22,7 @@ public class ConnectionArgOptionValueImpl extends AbstractMultiOptionValue<List<
     }
 
     @Override
-    protected String getArg() {
+    public String getArg() {
         return null;
     }
 
@@ -31,6 +31,11 @@ public class ConnectionArgOptionValueImpl extends AbstractMultiOptionValue<List<
         return getCommandLine().getArgList().stream()
                 .map(connectionString -> connectionService.createConnection(connectionString))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public int getNumberOfValues() {
+        return getCommandLine().getArgList().size();
     }
 
     @Override

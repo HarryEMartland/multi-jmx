@@ -21,15 +21,13 @@ public abstract class AbstractOptionValue<T> implements OptionValue<T> {
         return commandLineService.get();
     }
 
-    protected abstract String getArg();
-
     protected boolean hasOption() {
         return getCommandLine().hasOption(getArg());
     }
 
     protected abstract T lazyLoadValue();
 
-    protected int getNumberOfValues() {
+    public int getNumberOfValues() {
         return Optional.ofNullable(getCommandLine().getOptionValues(getArg()))
                 .map(strings -> strings.length)
                 .orElse(0);

@@ -18,7 +18,7 @@ public class PasswordOptionValueImpl extends AbstractSingleOptionValue<String> i
     }
 
     @Override
-    protected String getArg() {
+    public String getArg() {
         return "p";
     }
 

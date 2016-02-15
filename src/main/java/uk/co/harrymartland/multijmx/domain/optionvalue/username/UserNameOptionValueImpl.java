@@ -18,7 +18,7 @@ public class UserNameOptionValueImpl extends AbstractSingleOptionValue<String> i
     }
 
     @Override
-    protected String getArg() {
+    public String getArg() {
         return "u";
     }
 

@@ -18,7 +18,7 @@ public class HelpOptionValueImpl extends AbstractSingleOptionValue<Boolean> impl
     }
 
     @Override
-    protected String getArg() {
+    public String getArg() {
         return "h";
     }
 

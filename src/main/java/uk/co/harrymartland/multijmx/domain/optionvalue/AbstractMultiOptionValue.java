@@ -8,7 +8,7 @@ public abstract class AbstractMultiOptionValue<T> extends AbstractOptionValue<T>
         super(commandLineService);
     }
 
-    protected String[] getStringValues() {
+    public String[] getStringValues() {
         return getCommandLine().getOptionValues(getArg());
     }
 }

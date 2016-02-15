@@ -26,7 +26,7 @@ public class OrderConnectionOptionValueImpl extends AbstractSingleOptionValue<Bo
     }
 
     @Override
-    protected String getArg() {
+    public String getArg() {
         return "c";
     }
 
