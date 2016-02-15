@@ -1,7 +1,7 @@
 package uk.co.harrymartland.multijmx.service.validator;
 
 import com.google.inject.Inject;
-import uk.co.harrymartland.multijmx.domain.OptionValue.OptionValue;
+import uk.co.harrymartland.multijmx.domain.optionvalue.OptionValue;
 import uk.co.harrymartland.multijmx.validator.ValidationException;
 
 import java.util.Set;

@@ -8,7 +8,7 @@ import com.google.inject.multibindings.Multibinder;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import uk.co.harrymartland.multijmx.domain.OptionValue.OptionValue;
+import uk.co.harrymartland.multijmx.domain.optionvalue.OptionValue;
 
 public class ValidatorServiceImplTest {
 
