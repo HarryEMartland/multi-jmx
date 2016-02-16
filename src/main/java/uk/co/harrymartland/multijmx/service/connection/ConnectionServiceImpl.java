@@ -3,8 +3,8 @@ package uk.co.harrymartland.multijmx.service.connection;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import sun.management.ConnectorAddressLink;
+import uk.co.harrymartland.multijmx.domain.ValidationException;
 import uk.co.harrymartland.multijmx.domain.connection.JMXConnection;
-import uk.co.harrymartland.multijmx.validator.ValidationException;
 
 import javax.management.remote.JMXServiceURL;
 import java.io.IOException;

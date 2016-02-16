@@ -2,9 +2,9 @@ package uk.co.harrymartland.multijmx.domain.optionvalue.object;
 
 import org.junit.Assert;
 import org.junit.Test;
+import uk.co.harrymartland.multijmx.domain.ValidationException;
 import uk.co.harrymartland.multijmx.domain.optionvalue.AbstractOptionValueTest;
 import uk.co.harrymartland.multijmx.service.commandline.CommandLineService;
-import uk.co.harrymartland.multijmx.validator.ValidationException;
 
 import javax.management.ObjectName;
 import java.util.Arrays;

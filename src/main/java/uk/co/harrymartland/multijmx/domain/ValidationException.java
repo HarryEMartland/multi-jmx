@@ -1,4 +1,4 @@
-package uk.co.harrymartland.multijmx.validator;
+package uk.co.harrymartland.multijmx.domain;
 
 public class ValidationException extends Exception {
     public ValidationException(String message) {

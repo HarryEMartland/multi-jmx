@@ -66,7 +66,7 @@ public class JMXConnectionResponse implements Errorable<List<JMXValueResult>> {
         }
     }
 
-    private static abstract class AbstractComparator implements Comparator<JMXConnectionResponse> {
+    public static abstract class AbstractComparator implements Comparator<JMXConnectionResponse> {
         private boolean reversed = false;
 
         @Override

@@ -1,7 +1,7 @@
 package uk.co.harrymartland.multijmx.domain.optionvalue;
 
+import uk.co.harrymartland.multijmx.domain.ValidationException;
 import uk.co.harrymartland.multijmx.service.commandline.CommandLineService;
-import uk.co.harrymartland.multijmx.validator.ValidationException;
 
 public abstract class AbstractSingleOptionValue<T> extends AbstractOptionValue<T> {
 

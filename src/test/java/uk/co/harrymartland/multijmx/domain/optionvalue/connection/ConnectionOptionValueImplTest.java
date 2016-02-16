@@ -3,11 +3,11 @@ package uk.co.harrymartland.multijmx.domain.optionvalue.connection;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+import uk.co.harrymartland.multijmx.domain.ValidationException;
 import uk.co.harrymartland.multijmx.domain.connection.JMXConnection;
 import uk.co.harrymartland.multijmx.domain.optionvalue.connectionarg.ConnectionArgOptionValue;
 import uk.co.harrymartland.multijmx.domain.optionvalue.connectionfile.ConnectionFileOptionValue;
 import uk.co.harrymartland.multijmx.service.commandline.CommandLineService;
-import uk.co.harrymartland.multijmx.validator.ValidationException;
 
 import java.util.Arrays;
 

@@ -2,11 +2,11 @@ package uk.co.harrymartland.multijmx.domain.optionvalue.connectionarg;
 
 import com.google.inject.Inject;
 import org.apache.commons.cli.Option;
+import uk.co.harrymartland.multijmx.domain.ValidationException;
 import uk.co.harrymartland.multijmx.domain.connection.JMXConnection;
 import uk.co.harrymartland.multijmx.domain.optionvalue.AbstractMultiOptionValue;
 import uk.co.harrymartland.multijmx.service.commandline.CommandLineService;
 import uk.co.harrymartland.multijmx.service.connection.ConnectionService;
-import uk.co.harrymartland.multijmx.validator.ValidationException;
 
 import java.util.List;
 import java.util.stream.Collectors;

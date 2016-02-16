@@ -5,8 +5,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import uk.co.harrymartland.multijmx.domain.ValidationException;
 import uk.co.harrymartland.multijmx.service.commandline.CommandLineService;
-import uk.co.harrymartland.multijmx.validator.ValidationException;
 
 public abstract class AbstractOptionValueTest<T extends AbstractOptionValue<K>, K> {
 

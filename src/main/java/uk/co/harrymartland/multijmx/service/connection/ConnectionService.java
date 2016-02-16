@@ -1,7 +1,7 @@
 package uk.co.harrymartland.multijmx.service.connection;
 
+import uk.co.harrymartland.multijmx.domain.ValidationException;
 import uk.co.harrymartland.multijmx.domain.connection.JMXConnection;
-import uk.co.harrymartland.multijmx.validator.ValidationException;
 
 public interface ConnectionService {
 

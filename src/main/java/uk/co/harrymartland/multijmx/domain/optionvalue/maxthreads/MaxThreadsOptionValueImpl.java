@@ -3,9 +3,9 @@ package uk.co.harrymartland.multijmx.domain.optionvalue.maxthreads;
 import com.google.inject.Inject;
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.math.NumberUtils;
+import uk.co.harrymartland.multijmx.domain.ValidationException;
 import uk.co.harrymartland.multijmx.domain.optionvalue.AbstractSingleOptionValue;
 import uk.co.harrymartland.multijmx.service.commandline.CommandLineService;
-import uk.co.harrymartland.multijmx.validator.ValidationException;
 
 public class MaxThreadsOptionValueImpl extends AbstractSingleOptionValue<Integer> implements MaxThreadsOptionValue {
 

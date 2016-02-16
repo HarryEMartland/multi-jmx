@@ -4,9 +4,9 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.apache.commons.cli.Option;
+import uk.co.harrymartland.multijmx.domain.ValidationException;
 import uk.co.harrymartland.multijmx.domain.optionvalue.AbstractMultiOptionValue;
 import uk.co.harrymartland.multijmx.service.commandline.CommandLineService;
-import uk.co.harrymartland.multijmx.validator.ValidationException;
 
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;

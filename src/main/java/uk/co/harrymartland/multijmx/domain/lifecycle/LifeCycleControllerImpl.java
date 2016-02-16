@@ -21,5 +21,5 @@ public class LifeCycleControllerImpl implements LifeCycleController {
     @Override
     public void killAll() {
         lifeCycleAbles.forEach(LifeCycleAble::die);
-    }
+    }//todo move to service package and rename
 }

@@ -5,6 +5,7 @@ import com.google.inject.Singleton;
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.expression.ExpressionParser;
+import uk.co.harrymartland.multijmx.domain.ValidationException;
 import uk.co.harrymartland.multijmx.domain.optionvalue.AbstractMultiOptionValue;
 import uk.co.harrymartland.multijmx.domain.typeable.ObjectType;
 import uk.co.harrymartland.multijmx.domain.typeable.Typeable;
@@ -12,7 +13,6 @@ import uk.co.harrymartland.multijmx.domain.valueretriver.AttributeValueRetriever
 import uk.co.harrymartland.multijmx.domain.valueretriver.JMXValueRetriever;
 import uk.co.harrymartland.multijmx.domain.valueretriver.SpelMethodValueRetriever;
 import uk.co.harrymartland.multijmx.service.commandline.CommandLineService;
-import uk.co.harrymartland.multijmx.validator.ValidationException;
 
 import java.util.Arrays;
 import java.util.List;

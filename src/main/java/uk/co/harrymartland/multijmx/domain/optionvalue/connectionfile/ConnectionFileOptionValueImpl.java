@@ -2,12 +2,12 @@ package uk.co.harrymartland.multijmx.domain.optionvalue.connectionfile;
 
 import com.google.inject.Inject;
 import org.apache.commons.cli.Option;
+import uk.co.harrymartland.multijmx.domain.ValidationException;
 import uk.co.harrymartland.multijmx.domain.connection.JMXConnection;
 import uk.co.harrymartland.multijmx.domain.optionvalue.AbstractSingleOptionValue;
 import uk.co.harrymartland.multijmx.service.commandline.CommandLineService;
 import uk.co.harrymartland.multijmx.service.connection.ConnectionService;
 import uk.co.harrymartland.multijmx.service.file.FileReaderService;
-import uk.co.harrymartland.multijmx.validator.ValidationException;
 
 import java.io.IOException;
 import java.nio.file.Path;
