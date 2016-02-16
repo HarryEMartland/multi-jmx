@@ -19,6 +19,8 @@ import uk.co.harrymartland.multijmx.domain.optionvalue.maxthreads.MaxThreadsOpti
 import uk.co.harrymartland.multijmx.domain.optionvalue.maxthreads.MaxThreadsOptionValueImpl;
 import uk.co.harrymartland.multijmx.domain.optionvalue.object.ObjectOptionValue;
 import uk.co.harrymartland.multijmx.domain.optionvalue.object.ObjectOptionValueImpl;
+import uk.co.harrymartland.multijmx.domain.optionvalue.objectsignature.ObjectSignatureOptionValue;
+import uk.co.harrymartland.multijmx.domain.optionvalue.objectsignature.ObjectSignatureOptionValueImpl;
 import uk.co.harrymartland.multijmx.domain.optionvalue.order.OrderOptionValue;
 import uk.co.harrymartland.multijmx.domain.optionvalue.order.OrderOptionValueImpl;
 import uk.co.harrymartland.multijmx.domain.optionvalue.orderconnection.OrderConnectionOptionValue;
@@ -66,6 +68,7 @@ public class ArgumentModule extends AbstractModule {
         bindOptionValue(HelpOptionValue.class, HelpOptionValueImpl.class);
         bindOptionValue(ConnectionOptionValue.class, ConnectionOptionValueImpl.class);
         bindOptionValue(OrderOptionValue.class, OrderOptionValueImpl.class);
+        bindOptionValue(ObjectSignatureOptionValue.class, ObjectSignatureOptionValueImpl.class);
     }
 
     private Multibinder<OptionValue> getOptionBinder() {

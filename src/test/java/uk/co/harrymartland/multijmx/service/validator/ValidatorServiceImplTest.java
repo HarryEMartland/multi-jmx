@@ -67,13 +67,13 @@ public class ValidatorServiceImplTest {
     @Test
     public void testShouldThrowExceptionWhenMoreAttributesThanObjects() throws Exception {
         createCommandLine("-a", "att1", "-a", "att1", "-a", "att1", "-o", VALID_OBJECT_NAME, "-o", VALID_OBJECT_NAME, "validConnection");
-        assertExceptionThrown("Number of attributes and objects must match");
+        assertExceptionThrown("Number of objects and signatures must match");
     }
 
     @Test
     public void testShouldThrowExceptionWhenMoreObjectsThanAttributes() throws Exception {
         createCommandLine("-a", "att1", "-a", "att2", "-o", VALID_OBJECT_NAME, "-o", VALID_OBJECT_NAME, "-o", VALID_OBJECT_NAME, "validConnection");
-        assertExceptionThrown("Number of attributes and objects must match");//todo composit option value
+        assertExceptionThrown("Number of objects and signatures must match");
     }
 
     @Test
