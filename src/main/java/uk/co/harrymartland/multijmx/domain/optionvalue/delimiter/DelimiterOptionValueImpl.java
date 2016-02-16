@@ -5,7 +5,11 @@ import org.apache.commons.cli.Option;
 import uk.co.harrymartland.multijmx.domain.optionvalue.AbstractSingleOptionValue;
 import uk.co.harrymartland.multijmx.service.commandline.CommandLineService;
 
+import java.util.Optional;
+
 public class DelimiterOptionValueImpl extends AbstractSingleOptionValue<String> implements DelimiterOptionValue {
+
+    private static final String DEFAULT_DELIMITER = "\t";
 
     @Inject
     public DelimiterOptionValueImpl(CommandLineService commandLineService) {
@@ -24,7 +28,7 @@ public class DelimiterOptionValueImpl extends AbstractSingleOptionValue<String> 
 
     @Override
     protected String lazyLoadValue() {
-        return getStringValue();
+        return Optional.ofNullable(getStringValue()).orElse(DEFAULT_DELIMITER);
     }
 
     @Override
