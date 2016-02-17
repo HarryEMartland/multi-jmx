@@ -7,15 +7,11 @@ import uk.co.harrymartland.multijmx.domain.optionvalue.connection.ConnectionOpti
 import uk.co.harrymartland.multijmx.domain.optionvalue.maxthreads.MaxThreadsOptionValue;
 import uk.co.harrymartland.multijmx.domain.optionvalue.object.ObjectOptionValue;
 import uk.co.harrymartland.multijmx.domain.optionvalue.order.OrderOptionValue;
-import uk.co.harrymartland.multijmx.domain.optionvalue.orderconnection.OrderConnectionOptionValue;
-import uk.co.harrymartland.multijmx.domain.optionvalue.ordervalue.OrderValueOptionValue;
 import uk.co.harrymartland.multijmx.domain.optionvalue.password.PasswordOptionValue;
-import uk.co.harrymartland.multijmx.domain.optionvalue.reverseorder.ReverseOrderOptionValue;
 import uk.co.harrymartland.multijmx.domain.optionvalue.signature.SignatureOptionValue;
 import uk.co.harrymartland.multijmx.domain.optionvalue.username.UserNameOptionValue;
 import uk.co.harrymartland.multijmx.jmxrunner.PasswordJmxRunner;
 import uk.co.harrymartland.multijmx.jmxrunner.RemoteJmxRunner;
-import uk.co.harrymartland.multijmx.service.valueretriever.ValueRetrieverService;
 
 import java.util.Comparator;
 import java.util.concurrent.ExecutionException;
@@ -27,31 +23,24 @@ import java.util.stream.Stream;
 
 public class MultiJMXProcessorImpl implements MultiJMXProcessor {
 
-    private ValueRetrieverService valueRetrieverService;
     private ConnectionOptionValue connectionOptionValue;
     private MaxThreadsOptionValue maxThreadsOptionValue;
     private PasswordOptionValue passwordOptionValue;
     private UserNameOptionValue userNameOptionValue;
     private ObjectOptionValue objectOptionValue;
     private SignatureOptionValue signatureOptionValue;
-    private OrderConnectionOptionValue orderConnectionOptionValue;
-    private OrderValueOptionValue orderValueOptionValue;
-    private ReverseOrderOptionValue reverseOrderOptionValue;
     private OrderOptionValue orderOptionValue;
 
 
     @Inject
-    public MultiJMXProcessorImpl(ValueRetrieverService valueRetrieverService, ConnectionOptionValue connectionOptionValue, MaxThreadsOptionValue maxThreadsOptionValue, PasswordOptionValue passwordOptionValue, UserNameOptionValue userNameOptionValue, ObjectOptionValue objectOptionValue, SignatureOptionValue signatureOptionValue, OrderConnectionOptionValue orderConnectionOptionValue, OrderValueOptionValue orderValueOptionValue, ReverseOrderOptionValue reverseOrderOptionValue) {
-        this.valueRetrieverService = valueRetrieverService;
+    public MultiJMXProcessorImpl(ConnectionOptionValue connectionOptionValue, MaxThreadsOptionValue maxThreadsOptionValue, PasswordOptionValue passwordOptionValue, UserNameOptionValue userNameOptionValue, ObjectOptionValue objectOptionValue, SignatureOptionValue signatureOptionValue, OrderOptionValue orderOptionValue) {
         this.connectionOptionValue = connectionOptionValue;
         this.maxThreadsOptionValue = maxThreadsOptionValue;
         this.passwordOptionValue = passwordOptionValue;
         this.userNameOptionValue = userNameOptionValue;
         this.objectOptionValue = objectOptionValue;
         this.signatureOptionValue = signatureOptionValue;
-        this.orderConnectionOptionValue = orderConnectionOptionValue;
-        this.orderValueOptionValue = orderValueOptionValue;
-        this.reverseOrderOptionValue = reverseOrderOptionValue;
+        this.orderOptionValue = orderOptionValue;
     }
 
     @Override
