@@ -59,6 +59,8 @@ public class Main {
         try {
             lifeCycleService.birthAll();
             main.run(args);
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             lifeCycleService.killAll();
         }

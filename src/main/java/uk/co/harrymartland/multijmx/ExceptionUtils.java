@@ -5,8 +5,20 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.function.Consumer;
 
 public class ExceptionUtils {
+
+
+    public static <T> Consumer<T> eat(Consumer<T> function) {
+        return t -> {
+            try {
+                function.accept(t);
+            } catch (Exception e) {
+                eat(e);
+            }
+        };
+    }
 
     public static void closeQuietly(Closeable... closeables) {
         Arrays.asList(closeables).forEach(ExceptionUtils::closeQuietly);

@@ -6,6 +6,8 @@ import uk.co.harrymartland.multijmx.domain.LifeCycleAble;
 
 import java.util.Set;
 
+import static uk.co.harrymartland.multijmx.ExceptionUtils.eat;
+
 public class LifeCycleServiceImpl implements LifeCycleService {
 
     private Provider<Set<LifeCycleAble>> lifeCycleAbles;
@@ -22,6 +24,6 @@ public class LifeCycleServiceImpl implements LifeCycleService {
 
     @Override
     public void killAll() {
-        lifeCycleAbles.get().forEach(LifeCycleAble::die);
-    }//todo move to service package and rename
+        lifeCycleAbles.get().forEach(eat(LifeCycleAble::die));
+    }
 }
