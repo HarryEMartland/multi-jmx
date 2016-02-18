@@ -2,4 +2,4 @@ box: maven:latest
 build:
   steps:
     - xenoterracide/maven:
-        goals: test
+        goals: verify
