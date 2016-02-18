@@ -45,12 +45,11 @@ public class OrderOptionValueImpl extends AbstractOptionValue<Comparator<JMXConn
     }
 
     @Override
-    public boolean validate() throws ValidationException {
+    public void validate() throws ValidationException {
         super.validate();
         if (orderConnectionOptionValue.getValue() && orderValueOptionValue.getValue()) {
             throw new ValidationException("Cannot order by connection and display");
         }
-        return true;
     }
 
     @Override

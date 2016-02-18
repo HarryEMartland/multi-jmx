@@ -44,13 +44,12 @@ public class ConnectionArgOptionValueImpl extends AbstractMultiOptionValue<List<
     }
 
     @Override
-    public boolean validate() throws ValidationException {
+    public void validate() throws ValidationException {
         if (hasOption()) {
             for (String connectionString : getCommandLine().getArgList()) {
                 connectionService.validate(connectionString);
             }
         }
-        return true;
     }
 
     @Override

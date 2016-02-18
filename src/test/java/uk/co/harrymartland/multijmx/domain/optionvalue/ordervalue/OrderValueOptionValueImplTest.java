@@ -14,7 +14,7 @@ public class OrderValueOptionValueImplTest {
     private OrderValueOptionValue orderConnectionOptionValue = new OrderValueOptionValueImpl(commandLineService);
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         Mockito.when(commandLineService.get()).thenReturn(commandLine);
 
     }

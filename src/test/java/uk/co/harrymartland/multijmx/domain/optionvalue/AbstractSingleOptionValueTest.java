@@ -5,7 +5,7 @@ import org.junit.Test;
 public abstract class AbstractSingleOptionValueTest<T extends AbstractSingleOptionValue<K>, K> extends AbstractOptionValueTest<T, K> {
 
     @Test
-    public void testShouldNotPassValidationWhenMoreThanOneArgumentPassed() throws Exception {
+    public void testShouldNotPassValidationWhenMoreThanOneArgumentPassed() {
         givenCommandLineArguments("str1", "str2");
         thenShouldThrowValidationExceptionOnValidation(getMoreThanOneArgumentError());
     }

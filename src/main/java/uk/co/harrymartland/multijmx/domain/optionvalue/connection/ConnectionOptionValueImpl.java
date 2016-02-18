@@ -31,11 +31,10 @@ public class ConnectionOptionValueImpl extends AbstractMultiOptionValue<List<JMX
     }
 
     @Override
-    public boolean validate() throws ValidationException {
+    public void validate() throws ValidationException {
         if (connectionArgOptionValue.getNumberOfValues() + connectionFileOptionValue.getNumberOfValues() < 1) {
             throw new ValidationException("At least one connection must be specified");
         }
-        return true;
     }
 
     @Override

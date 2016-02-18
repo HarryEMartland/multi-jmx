@@ -6,7 +6,7 @@ import uk.co.harrymartland.multijmx.domain.ValidationException;
 public interface OptionValue<T> {
     Option getOption();
 
-    boolean validate() throws ValidationException;
+    void validate() throws ValidationException;
 
     T getValue();
 

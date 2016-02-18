@@ -45,13 +45,12 @@ public abstract class AbstractOptionValue<T> implements OptionValue<T> {
 
 
     @Override
-    public boolean validate() throws ValidationException {
+    public void validate() throws ValidationException {
         if (isRequired()) {
             if (getNumberOfValues() < 1) {
                 throw new ValidationException(getRequiredError());
             }
         }
-        return true;
     }
 
     @Override

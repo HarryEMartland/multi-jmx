@@ -59,7 +59,7 @@ public class SignatureOptionValueImpl extends AbstractMultiOptionValue<List<JMXV
     }
 
     @Override
-    public boolean validate() throws ValidationException {
+    public void validate() throws ValidationException {
         super.validate();
         for (String signature : getStringValues()) {
             if (signature.contains("(")) {
@@ -68,7 +68,6 @@ public class SignatureOptionValueImpl extends AbstractMultiOptionValue<List<JMXV
                 validateName(signature);
             }
         }
-        return true;
     }
 
     @Override

@@ -44,12 +44,11 @@ public class ObjectOptionValueImpl extends AbstractMultiOptionValue<List<ObjectN
     }
 
     @Override
-    public boolean validate() throws ValidationException {
+    public void validate() throws ValidationException {
         super.validate();
         for (String objectName : getStringValues()) {
             validateObjectName(objectName);
         }
-        return true;
     }
 
     @Override
@@ -64,9 +63,9 @@ public class ObjectOptionValueImpl extends AbstractMultiOptionValue<List<ObjectN
                 .collect(Collectors.toList());
     }
 
-    private ObjectName validateObjectName(String objectName) throws ValidationException {
+    private void validateObjectName(String objectName) throws ValidationException {
         try {
-            return new ObjectName(objectName);
+            new ObjectName(objectName);
         } catch (MalformedObjectNameException e) {
             throw new ValidationException("Could not parse object name: " + objectName, e);
         }

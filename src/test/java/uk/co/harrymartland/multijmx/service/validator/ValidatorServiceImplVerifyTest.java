@@ -19,7 +19,7 @@ public class ValidatorServiceImplVerifyTest {
     private OptionValue optionValue2 = Mockito.mock(OptionValue.class);
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         Injector injector = Guice.createInjector(new AbstractModule() {
             @Override
             protected void configure() {

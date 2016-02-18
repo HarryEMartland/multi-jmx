@@ -36,7 +36,7 @@ public class MainTest {
     private List<JMXConnectionResponse> mockResponses = Collections.emptyList();
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         Guice.createInjector(new AbstractModule() {
             @Override
             protected void configure() {

@@ -22,7 +22,7 @@ public abstract class AbstractOptionValueTest<T extends AbstractOptionValue<K>, 
 
 
     @Test
-    public void testValidateNotSet() throws Exception {
+    public void testValidateNotSet() {
         if (getOptionValue().isRequired()) {
             thenShouldThrowValidationExceptionOnValidation(getRequiredValidation());
         } else {

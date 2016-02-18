@@ -30,11 +30,10 @@ public class ObjectSignatureOptionValueImpl implements ObjectSignatureOptionValu
     }
 
     @Override
-    public boolean validate() throws ValidationException {
+    public void validate() throws ValidationException {
         if (objectOptionValue.getValue().size() > 1 && objectOptionValue.getValue().size() != signatureOptionValue.getValue().size()) {
             throw new ValidationException("Number of objects and signatures must match");
         }
-        return true;
     }
 
     @Override

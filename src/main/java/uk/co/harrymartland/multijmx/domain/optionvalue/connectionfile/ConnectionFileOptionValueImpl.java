@@ -52,7 +52,7 @@ public class ConnectionFileOptionValueImpl extends AbstractSingleOptionValue<Lis
     }
 
     @Override
-    public boolean validate() throws ValidationException {
+    public void validate() throws ValidationException {
         super.validate();
         if (hasOption() && !fileReaderService.exists(getPath())) {
             throw new ValidationException("Connection file not found: " + getStringValue());
@@ -66,7 +66,6 @@ public class ConnectionFileOptionValueImpl extends AbstractSingleOptionValue<Lis
             throw new ValidationException("Could not read file: " + getStringValue(), e);
         }
 
-        return true;
     }
 
     private List<String> loadFromFile() throws IOException {

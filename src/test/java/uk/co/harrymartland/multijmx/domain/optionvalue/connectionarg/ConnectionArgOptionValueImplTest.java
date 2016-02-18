@@ -29,14 +29,14 @@ public class ConnectionArgOptionValueImplTest extends AbstractOptionValueTest<Co
     }
 
     @Test
-    public void testShouldFailValidationWhenInvalidConnection() throws Exception {
+    public void testShouldFailValidationWhenInvalidConnection() throws ValidationException {
         givenInvalidValidConnections("connectionarg");
         givenCommandLineArguments("connectionarg");
         thenShouldThrowValidationExceptionOnValidation("Invalid connectionarg");
     }
 
     @Test
-    public void testShouldFailValidationWhenInvalidSecondConnection() throws Exception {
+    public void testShouldFailValidationWhenInvalidSecondConnection() throws ValidationException {
         givenInvalidValidConnections("connection2");
         givenValidConnections("connectionarg");
         givenCommandLineArguments("connectionarg", "connection2");

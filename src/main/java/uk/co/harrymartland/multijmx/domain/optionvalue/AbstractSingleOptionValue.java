@@ -14,12 +14,11 @@ public abstract class AbstractSingleOptionValue<T> extends AbstractOptionValue<T
     }
 
     @Override
-    public boolean validate() throws ValidationException {
+    public void validate() throws ValidationException {
         super.validate();
         if (getNumberOfValues() > 1) {
             throw new ValidationException(getMultipleArgumentError());
         }
-        return true;
     }
 
     protected abstract String getMultipleArgumentError();

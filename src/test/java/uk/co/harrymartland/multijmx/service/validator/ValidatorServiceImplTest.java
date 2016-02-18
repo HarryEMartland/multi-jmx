@@ -3,7 +3,6 @@ package uk.co.harrymartland.multijmx.service.validator;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -23,7 +22,7 @@ public class ValidatorServiceImplTest {
     private CommandLineService commandLineService;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         Injector injector = Guice.createInjector(new ArgumentModule(), new MultiJMXModule());
         injector.injectMembers(this);
     }
@@ -113,8 +112,8 @@ public class ValidatorServiceImplTest {
     }
 
 
-    private CommandLine createCommandLine(String... args) throws ParseException {
-        return commandLineService.create(args);
+    private void createCommandLine(String... args) throws ParseException {
+        commandLineService.create(args);
     }
 
     private void assertNoExceptionThrown() {
