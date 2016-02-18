@@ -8,7 +8,6 @@ import uk.co.harrymartland.multijmx.domain.optionvalue.threadpool.ThreadPoolOpti
 
 import java.util.Comparator;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -29,21 +28,14 @@ public class MultiJMXProcessorImpl implements MultiJMXProcessor {
 
     @Override
     public Stream<JMXConnectionResponse> run() {
-        ExecutorService executorService = null;
 
-        try {
-            Stream<JMXConnectionResponse> objectStream = jmxRunnerOptionValue.getValue().stream()
-                    .map(threadPoolOptionValue.getValue()::submit)
-                    .collect(Collectors.toList())
-                    .stream()
-                    .map(this::getObject);
+        Stream<JMXConnectionResponse> objectStream = jmxRunnerOptionValue.getValue().stream()
+                .map(threadPoolOptionValue.getValue()::submit)
+                .collect(Collectors.toList())
+                .stream()
+                .map(this::getObject);
 
-            return sort(objectStream);
-        } finally {
-            if (executorService != null) {
-                executorService.shutdownNow();
-            }
-        }
+        return sort(objectStream);
     }
 
     private Stream<JMXConnectionResponse> sort(Stream<JMXConnectionResponse> objectStream) {

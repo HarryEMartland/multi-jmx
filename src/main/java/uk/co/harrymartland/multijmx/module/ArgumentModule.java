@@ -4,6 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
+import uk.co.harrymartland.multijmx.domain.lifecycle.LifeCycleAble;
 import uk.co.harrymartland.multijmx.domain.optionvalue.OptionValue;
 import uk.co.harrymartland.multijmx.domain.optionvalue.connection.ConnectionOptionValue;
 import uk.co.harrymartland.multijmx.domain.optionvalue.connection.ConnectionOptionValueImpl;
@@ -75,6 +76,9 @@ public class ArgumentModule extends AbstractModule {
         bindOptionValue(ObjectSignatureOptionValue.class, ObjectSignatureOptionValueImpl.class);
         bindOptionValue(JMXRunnerOptionValue.class, JMXRunnerOptionValueImpl.class);
         bindOptionValue(ThreadPoolOptionValue.class, ThreadPoolOptionValueImpl.class);
+
+        Multibinder<LifeCycleAble> lifeCycleAbleMultibinder = Multibinder.newSetBinder(binder(), LifeCycleAble.class);
+        lifeCycleAbleMultibinder.addBinding().to(ThreadPoolOptionValueImpl.class);
     }
 
     private Multibinder<OptionValue> getOptionBinder() {

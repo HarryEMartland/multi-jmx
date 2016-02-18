@@ -1,6 +1,7 @@
 package uk.co.harrymartland.multijmx.service.commandline;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -13,10 +14,10 @@ public class CommandLineServiceImpl implements CommandLineService {
 
     private CommandLine commandLine;
     private CommandLineParser commandLineParser;
-    private OptionsService optionsService;
+    private Provider<OptionsService> optionsService;
 
     @Inject
-    public CommandLineServiceImpl(CommandLineParser commandLineParser, OptionsService optionsService) {
+    public CommandLineServiceImpl(CommandLineParser commandLineParser, Provider<OptionsService> optionsService) {
         this.commandLineParser = commandLineParser;
         this.optionsService = optionsService;
     }
@@ -34,6 +35,6 @@ public class CommandLineServiceImpl implements CommandLineService {
         if (commandLine != null) {
             throw new IllegalStateException("Command line already set!");
         }
-        return commandLine = commandLineParser.parse(optionsService.getOptions(), args);
+        return commandLine = commandLineParser.parse(optionsService.get().getOptions(), args);
     }
 }
