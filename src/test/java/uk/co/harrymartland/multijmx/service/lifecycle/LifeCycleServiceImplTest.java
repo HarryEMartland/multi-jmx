@@ -1,4 +1,4 @@
-package uk.co.harrymartland.multijmx.domain.lifecycle;
+package uk.co.harrymartland.multijmx.service.lifecycle;
 
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -6,6 +6,7 @@ import com.google.inject.Injector;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import uk.co.harrymartland.multijmx.domain.LifeCycleAble;
 import uk.co.harrymartland.multijmx.domain.optionvalue.threadpool.ThreadPoolOptionValueImpl;
 import uk.co.harrymartland.multijmx.module.ArgumentModule;
 import uk.co.harrymartland.multijmx.module.MultiJMXModule;
@@ -13,7 +14,7 @@ import uk.co.harrymartland.multijmx.waitable.SystemWaitable;
 
 import java.util.Set;
 
-public class LifeCycleControllerImplTest {
+public class LifeCycleServiceImplTest {
 
     @Inject
     private Set<LifeCycleAble> lifeCycleAbles;

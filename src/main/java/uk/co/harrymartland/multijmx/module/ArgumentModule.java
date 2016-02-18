@@ -4,7 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
-import uk.co.harrymartland.multijmx.domain.lifecycle.LifeCycleAble;
+import uk.co.harrymartland.multijmx.domain.LifeCycleAble;
 import uk.co.harrymartland.multijmx.domain.optionvalue.OptionValue;
 import uk.co.harrymartland.multijmx.domain.optionvalue.connection.ConnectionOptionValue;
 import uk.co.harrymartland.multijmx.domain.optionvalue.connection.ConnectionOptionValueImpl;

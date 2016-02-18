@@ -8,13 +8,13 @@ import org.apache.commons.cli.ParseException;
 import uk.co.harrymartland.multijmx.domain.JMXConnectionResponse;
 import uk.co.harrymartland.multijmx.domain.JMXValueResult;
 import uk.co.harrymartland.multijmx.domain.ValidationException;
-import uk.co.harrymartland.multijmx.domain.lifecycle.LifeCycleController;
 import uk.co.harrymartland.multijmx.domain.optionvalue.delimiter.DelimiterOptionValue;
 import uk.co.harrymartland.multijmx.domain.optionvalue.help.HelpOptionValue;
 import uk.co.harrymartland.multijmx.module.ArgumentModule;
 import uk.co.harrymartland.multijmx.module.MultiJMXModule;
 import uk.co.harrymartland.multijmx.processer.MultiJMXProcessor;
 import uk.co.harrymartland.multijmx.service.commandline.CommandLineService;
+import uk.co.harrymartland.multijmx.service.lifecycle.LifeCycleService;
 import uk.co.harrymartland.multijmx.service.options.OptionsService;
 import uk.co.harrymartland.multijmx.service.validator.ValidatorService;
 import uk.co.harrymartland.multijmx.waitable.Waitable;
@@ -55,12 +55,12 @@ public class Main {
     public static void main(String[] args) throws ParseException, ValidationException {
         Injector injector = Guice.createInjector(new MultiJMXModule(), new ArgumentModule());
         Main main = injector.getInstance(Main.class);
-        LifeCycleController lifeCycleController = injector.getInstance(LifeCycleController.class);
+        LifeCycleService lifeCycleService = injector.getInstance(LifeCycleService.class);
         try {
-            lifeCycleController.birthAll();
+            lifeCycleService.birthAll();
             main.run(args);
         } finally {
-            lifeCycleController.killAll();
+            lifeCycleService.killAll();
         }
     }
 

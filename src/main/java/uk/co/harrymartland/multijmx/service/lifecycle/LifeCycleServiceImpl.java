@@ -1,16 +1,17 @@
-package uk.co.harrymartland.multijmx.domain.lifecycle;
+package uk.co.harrymartland.multijmx.service.lifecycle;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import uk.co.harrymartland.multijmx.domain.LifeCycleAble;
 
 import java.util.Set;
 
-public class LifeCycleControllerImpl implements LifeCycleController {
+public class LifeCycleServiceImpl implements LifeCycleService {
 
     private Provider<Set<LifeCycleAble>> lifeCycleAbles;
 
     @Inject
-    public LifeCycleControllerImpl(Provider<Set<LifeCycleAble>> lifeCycleAbles) {
+    public LifeCycleServiceImpl(Provider<Set<LifeCycleAble>> lifeCycleAbles) {
         this.lifeCycleAbles = lifeCycleAbles;
     }
 

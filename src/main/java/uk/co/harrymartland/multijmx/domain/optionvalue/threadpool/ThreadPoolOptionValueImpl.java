@@ -2,7 +2,7 @@ package uk.co.harrymartland.multijmx.domain.optionvalue.threadpool;
 
 import com.google.inject.Inject;
 import org.apache.commons.cli.Option;
-import uk.co.harrymartland.multijmx.domain.lifecycle.LifeCycleAble;
+import uk.co.harrymartland.multijmx.domain.LifeCycleAble;
 import uk.co.harrymartland.multijmx.domain.optionvalue.AbstractOptionValue;
 import uk.co.harrymartland.multijmx.domain.optionvalue.maxthreads.MaxThreadsOptionValue;
 import uk.co.harrymartland.multijmx.service.commandline.CommandLineService;

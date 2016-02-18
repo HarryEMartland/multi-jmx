@@ -1,7 +1,7 @@
 package uk.co.harrymartland.multijmx.waitable;
 
 import uk.co.harrymartland.multijmx.ExceptionUtils;
-import uk.co.harrymartland.multijmx.domain.lifecycle.LifeCycleAble;
+import uk.co.harrymartland.multijmx.domain.LifeCycleAble;
 
 import java.io.BufferedReader;
 import java.io.IOException;

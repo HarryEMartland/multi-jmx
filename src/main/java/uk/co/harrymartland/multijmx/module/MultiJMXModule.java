@@ -4,15 +4,15 @@ import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
-import uk.co.harrymartland.multijmx.domain.lifecycle.LifeCycleAble;
-import uk.co.harrymartland.multijmx.domain.lifecycle.LifeCycleController;
-import uk.co.harrymartland.multijmx.domain.lifecycle.LifeCycleControllerImpl;
+import uk.co.harrymartland.multijmx.domain.LifeCycleAble;
 import uk.co.harrymartland.multijmx.processer.MultiJMXProcessor;
 import uk.co.harrymartland.multijmx.processer.MultiJMXProcessorImpl;
 import uk.co.harrymartland.multijmx.service.connection.ConnectionService;
 import uk.co.harrymartland.multijmx.service.connection.ConnectionServiceImpl;
 import uk.co.harrymartland.multijmx.service.file.FileReaderService;
 import uk.co.harrymartland.multijmx.service.file.FileReaderServiceImpl;
+import uk.co.harrymartland.multijmx.service.lifecycle.LifeCycleService;
+import uk.co.harrymartland.multijmx.service.lifecycle.LifeCycleServiceImpl;
 import uk.co.harrymartland.multijmx.waitable.SystemWaitable;
 import uk.co.harrymartland.multijmx.waitable.Waitable;
 import uk.co.harrymartland.multijmx.writer.SystemOutWriter;
@@ -26,7 +26,7 @@ public class MultiJMXModule extends AbstractModule {
         bind(MultiJMXProcessor.class).to(MultiJMXProcessorImpl.class);
         bind(Writer.class).to(SystemOutWriter.class);
         bind(Waitable.class).to(SystemWaitable.class);
-        bind(LifeCycleController.class).to(LifeCycleControllerImpl.class);
+        bind(LifeCycleService.class).to(LifeCycleServiceImpl.class);
         bind(ConnectionService.class).to(ConnectionServiceImpl.class);
         bind(FileReaderService.class).to(FileReaderServiceImpl.class);
 
