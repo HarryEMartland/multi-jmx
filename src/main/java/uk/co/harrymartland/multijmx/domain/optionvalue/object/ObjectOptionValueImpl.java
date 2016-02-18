@@ -30,7 +30,6 @@ public class ObjectOptionValueImpl extends AbstractMultiOptionValue<List<ObjectN
         return Option.builder(getArg())
                 .longOpt("object-name")
                 .argName("object name")
-                .required()
                 .hasArg()
                 .desc("JMX object name to read from e.g. 'java.lang:type=OperatingSystem'")
                 .build();

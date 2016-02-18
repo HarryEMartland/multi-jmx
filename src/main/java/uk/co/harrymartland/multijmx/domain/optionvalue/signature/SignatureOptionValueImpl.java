@@ -52,7 +52,6 @@ public class SignatureOptionValueImpl extends AbstractMultiOptionValue<List<JMXV
         return Option.builder(getArg())
                 .longOpt("signature")
                 .argName("signature")
-                .required()
                 .hasArg()
                 .desc("JMX signature to read from e.g. 'AvailableProcessors'")
                 .build();
