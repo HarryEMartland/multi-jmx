@@ -5,12 +5,12 @@ import org.junit.Test;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import uk.co.harrymartland.multijmx.domain.optionvalue.AbstractOptionValueTest;
 import uk.co.harrymartland.multijmx.domain.typeable.ObjectType;
-import uk.co.harrymartland.multijmx.domain.typeable.Typeable;
 import uk.co.harrymartland.multijmx.domain.valueretriver.AttributeValueRetriever;
 import uk.co.harrymartland.multijmx.domain.valueretriver.JMXValueRetriever;
 import uk.co.harrymartland.multijmx.domain.valueretriver.SpelMethodValueRetriever;
 import uk.co.harrymartland.multijmx.service.commandline.CommandLineService;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -114,12 +114,12 @@ public class SignatureOptionValueImplTest extends AbstractOptionValueTest<Signat
     @Test
     public void testShouldReturnMethodValueRetrieverWhenMethodPassed() throws Exception {
         givenCommandLineArguments("test()");
-        Assert.assertEquals(Collections.singletonList(new SpelMethodValueRetriever("test", new Typeable[]{})), getOptionValue().getValue());
+        Assert.assertEquals(Collections.singletonList(new SpelMethodValueRetriever("test", Collections.emptyList())), getOptionValue().getValue());
     }
 
     @Test
     public void testShouldReturnMethodValueRetrieverWhenMethodPassedWithArgs() throws Exception {
         givenCommandLineArguments("test(1, \"test\")");
-        Assert.assertEquals(Collections.singletonList(new SpelMethodValueRetriever("test", new Typeable[]{new ObjectType(1), new ObjectType("test")})), getOptionValue().getValue());
+        Assert.assertEquals(Collections.singletonList(new SpelMethodValueRetriever("test", Arrays.asList(new ObjectType(1), new ObjectType("test")))), getOptionValue().getValue());
     }
 }

@@ -1,19 +1,20 @@
 package uk.co.harrymartland.multijmx.domain.valueretriver;
 
+import com.google.common.collect.ImmutableList;
 import uk.co.harrymartland.multijmx.domain.typeable.Typeable;
 
 import javax.management.*;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.List;
 
 public class SpelMethodValueRetriever implements JMXValueRetriever {
 
     private String methodName;
-    private Typeable[] args;
+    private ImmutableList<Typeable> args;
 
-    public SpelMethodValueRetriever(String methodName, Typeable[] args) {
+    public SpelMethodValueRetriever(String methodName, List<Typeable> args) {
         this.methodName = methodName;
-        this.args = args;
+        this.args = ImmutableList.copyOf(args);
     }
 
     @Override
@@ -21,12 +22,12 @@ public class SpelMethodValueRetriever implements JMXValueRetriever {
         return (Comparable) mBeanServerConnection.invoke(
                 objectName,
                 methodName,
-                Arrays.stream(args).map(Typeable::getObject).toArray(Object[]::new), getSignatures()
+                args.stream().map(Typeable::getObject).toArray(Object[]::new), getSignatures()
         );
     }
 
     public String[] getSignatures() {
-        return Arrays.stream(args)
+        return args.stream()
                 .map(Typeable::getType)
                 .toArray(String[]::new);
     }
@@ -35,14 +36,18 @@ public class SpelMethodValueRetriever implements JMXValueRetriever {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         SpelMethodValueRetriever that = (SpelMethodValueRetriever) o;
-        return methodName != null ? methodName.equals(that.methodName) : that.methodName == null && Arrays.equals(args, that.args);
+
+        return methodName != null ? methodName.equals(that.methodName) : that.methodName == null
+                && (args != null ? args.equals(that.args) : that.args == null);
+
     }
 
     @Override
     public int hashCode() {
         int result = methodName != null ? methodName.hashCode() : 0;
-        result = 31 * result + Arrays.hashCode(args);
+        result = 31 * result + (args != null ? args.hashCode() : 0);
         return result;
     }
 }

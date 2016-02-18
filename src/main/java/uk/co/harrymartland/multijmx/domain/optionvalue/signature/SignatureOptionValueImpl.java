@@ -92,17 +92,16 @@ public class SignatureOptionValueImpl extends AbstractMultiOptionValue<List<JMXV
         final String methodName = signature.substring(0, firstOpenBracket);
         final String argumentsString = signature.substring(firstOpenBracket + 1, signature.length() - 1);
         final String[] arguments = StringUtils.split(argumentsString, ",");
-        final Typeable[] argumentValues = new Typeable[arguments.length];
 
-        for (int i = 0; i < arguments.length; i++) {
-            String argument = arguments[i];
+        List<Typeable> argumentValues = Arrays.stream(arguments).map(argument -> {
             Object returnedValue = expressionParser.parseExpression(argument).getValue();
             if (returnedValue instanceof Typeable) {
-                argumentValues[i] = (Typeable) returnedValue;
+                return (Typeable) returnedValue;
             } else {
-                argumentValues[i] = new ObjectType(returnedValue);
+                return new ObjectType(returnedValue);
             }
-        }
+        }).collect(Collectors.toList());
+
         return new SpelMethodValueRetriever(methodName, argumentValues);
     }
 

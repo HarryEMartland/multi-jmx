@@ -6,6 +6,7 @@ import uk.co.harrymartland.multijmx.domain.LifeCycleAble;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 public class SystemWaitable implements Waitable, LifeCycleAble {
 
@@ -23,7 +24,7 @@ public class SystemWaitable implements Waitable, LifeCycleAble {
 
     @Override
     public void birth() {
-        inputStream = new InputStreamReader(System.in);
+        inputStream = new InputStreamReader(System.in, StandardCharsets.UTF_8);
         reader = new BufferedReader(inputStream);
     }
 

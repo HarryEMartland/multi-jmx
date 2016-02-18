@@ -2,6 +2,7 @@ package uk.co.harrymartland.multijmx.domain;
 
 import org.apache.commons.lang3.ObjectUtils;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -89,7 +90,7 @@ public class JMXConnectionResponse implements Errorable<List<JMXValueResult>> {
         protected abstract int doCompare(JMXConnectionResponse o1, JMXConnectionResponse o2);
     }
 
-    public static class ValueComparator extends AbstractComparator {
+    public static class ValueComparator extends AbstractComparator implements Serializable {
         @Override
         public int doCompare(JMXConnectionResponse o1, JMXConnectionResponse o2) {
             Iterator<JMXValueResult> iterator1 = o1.getValue().iterator();
@@ -109,7 +110,7 @@ public class JMXConnectionResponse implements Errorable<List<JMXValueResult>> {
         }
     }
 
-    public static class DisplayComparator extends AbstractComparator {
+    public static class DisplayComparator extends AbstractComparator implements Serializable {
         @Override
         public int doCompare(JMXConnectionResponse o1, JMXConnectionResponse o2) {
             return ObjectUtils.compare(o1.getDisplay(), o2.getDisplay());
