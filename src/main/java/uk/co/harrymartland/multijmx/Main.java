@@ -3,7 +3,6 @@ package uk.co.harrymartland.multijmx;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.ParseException;
 import uk.co.harrymartland.multijmx.domain.JMXConnectionResponse;
@@ -67,7 +66,7 @@ public class Main {
 
     public void run(String[] args) throws ParseException, ValidationException {
 
-        CommandLine commandLine = commandLineService.create(args);
+        commandLineService.create(args);
 
         if (helpOptionValue.getValue()) {
             new HelpFormatter().printHelp("multi-jmx", optionsService.getOptions(), true);
