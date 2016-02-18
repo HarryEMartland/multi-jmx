@@ -13,8 +13,6 @@ import uk.co.harrymartland.multijmx.service.connection.ConnectionService;
 import uk.co.harrymartland.multijmx.service.connection.ConnectionServiceImpl;
 import uk.co.harrymartland.multijmx.service.file.FileReaderService;
 import uk.co.harrymartland.multijmx.service.file.FileReaderServiceImpl;
-import uk.co.harrymartland.multijmx.service.valueretriever.ValueRetrieverService;
-import uk.co.harrymartland.multijmx.service.valueretriever.ValueRetrieverServiceImpl;
 import uk.co.harrymartland.multijmx.waitable.SystemWaitable;
 import uk.co.harrymartland.multijmx.waitable.Waitable;
 import uk.co.harrymartland.multijmx.writer.SystemOutWriter;
@@ -28,7 +26,6 @@ public class MultiJMXModule extends AbstractModule {
         bind(MultiJMXProcessor.class).to(MultiJMXProcessorImpl.class);
         bind(Writer.class).to(SystemOutWriter.class);
         bind(Waitable.class).to(SystemWaitable.class);
-        bind(ValueRetrieverService.class).to(ValueRetrieverServiceImpl.class);
         bind(LifeCycleController.class).to(LifeCycleControllerImpl.class);
         bind(ConnectionService.class).to(ConnectionServiceImpl.class);
         bind(FileReaderService.class).to(FileReaderServiceImpl.class);
