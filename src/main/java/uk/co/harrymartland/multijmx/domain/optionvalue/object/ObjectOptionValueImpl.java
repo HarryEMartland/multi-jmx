@@ -2,7 +2,6 @@ package uk.co.harrymartland.multijmx.domain.optionvalue.object;
 
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import org.apache.commons.cli.Option;
 import uk.co.harrymartland.multijmx.domain.ValidationException;
 import uk.co.harrymartland.multijmx.domain.optionvalue.AbstractMultiOptionValue;
@@ -14,7 +13,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Singleton
 public class ObjectOptionValueImpl extends AbstractMultiOptionValue<List<ObjectName>> implements ObjectOptionValue {
 
     @Inject

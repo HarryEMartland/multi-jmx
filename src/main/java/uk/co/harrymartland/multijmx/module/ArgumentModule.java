@@ -35,6 +35,8 @@ import uk.co.harrymartland.multijmx.domain.optionvalue.reverseorder.ReverseOrder
 import uk.co.harrymartland.multijmx.domain.optionvalue.reverseorder.ReverseOrderOptionValueImpl;
 import uk.co.harrymartland.multijmx.domain.optionvalue.signature.SignatureOptionValue;
 import uk.co.harrymartland.multijmx.domain.optionvalue.signature.SignatureOptionValueImpl;
+import uk.co.harrymartland.multijmx.domain.optionvalue.threadpool.ThreadPoolOptionValue;
+import uk.co.harrymartland.multijmx.domain.optionvalue.threadpool.ThreadPoolOptionValueImpl;
 import uk.co.harrymartland.multijmx.domain.optionvalue.username.UserNameOptionValue;
 import uk.co.harrymartland.multijmx.domain.optionvalue.username.UserNameOptionValueImpl;
 import uk.co.harrymartland.multijmx.service.commandline.CommandLineService;
@@ -72,6 +74,7 @@ public class ArgumentModule extends AbstractModule {
         bindOptionValue(OrderOptionValue.class, OrderOptionValueImpl.class);
         bindOptionValue(ObjectSignatureOptionValue.class, ObjectSignatureOptionValueImpl.class);
         bindOptionValue(JMXRunnerOptionValue.class, JMXRunnerOptionValueImpl.class);
+        bindOptionValue(ThreadPoolOptionValue.class, ThreadPoolOptionValueImpl.class);
     }
 
     private Multibinder<OptionValue> getOptionBinder() {
