@@ -77,7 +77,7 @@ public class Main {
             validatorService.validate();
 
             List<Exception> errors = multiJMXProcessor.run()
-                    .peek(jmxResponse -> display(jmxResponse, writer))
+                    .peek(this::display)
                     .flatMap(this::getExceptions)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
@@ -102,7 +102,7 @@ public class Main {
     }
 
 
-    private void display(JMXConnectionResponse jmxConnectionResponse, Writer writer) {
+    private void display(JMXConnectionResponse jmxConnectionResponse) {
         String value;
         if (jmxConnectionResponse.isError()) {
             value = "ERROR (" + jmxConnectionResponse.getException().getMessage() + ")";
