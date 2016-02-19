@@ -17,6 +17,11 @@ public class MaxThreadsOptionValueImplTest extends AbstractSingleOptionValueTest
     }
 
     @Test
+    public void testShouldReturnNullWhenNotSet() throws Exception {
+        thenShouldReturn(null);
+    }
+
+    @Test
     public void testShouldNotThrowExceptionWhenValidInt() throws Exception {
         givenCommandLineArgument("1");
         thenShouldPassValidation();

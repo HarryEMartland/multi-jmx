@@ -44,6 +44,9 @@ public class MaxThreadsOptionValueImpl extends AbstractSingleOptionValue<Integer
 
     @Override
     public Integer lazyLoadValue() {
+        if (getStringValue() == null) {
+            return null;
+        }
         return Integer.parseInt(getStringValue());
     }
 }
