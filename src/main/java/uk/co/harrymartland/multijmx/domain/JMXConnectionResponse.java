@@ -91,6 +91,8 @@ public class JMXConnectionResponse implements Errorable<List<JMXValueResult>> {
     }
 
     public static class ValueComparator extends AbstractComparator implements Serializable {
+        private static final long serialVersionUID = -1238093868970903557L;
+
         @Override
         public int doCompare(JMXConnectionResponse o1, JMXConnectionResponse o2) {
             Iterator<JMXValueResult> iterator1 = o1.getValue().iterator();
@@ -111,6 +113,8 @@ public class JMXConnectionResponse implements Errorable<List<JMXValueResult>> {
     }
 
     public static class DisplayComparator extends AbstractComparator implements Serializable {
+        private static final long serialVersionUID = -2569221609904989791L;
+
         @Override
         public int doCompare(JMXConnectionResponse o1, JMXConnectionResponse o2) {
             return ObjectUtils.compare(o1.getDisplay(), o2.getDisplay());

@@ -84,7 +84,7 @@
                 <version>3.0.3</version>
                 <configuration>
                     <effort>Max</effort>
-                    <threshold>Medium</threshold>
+                    <threshold>Low</threshold>
                 </configuration>
                 <executions>
                     <execution>
