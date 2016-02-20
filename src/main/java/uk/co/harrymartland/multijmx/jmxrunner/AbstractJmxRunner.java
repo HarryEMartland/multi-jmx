@@ -1,5 +1,6 @@
 package uk.co.harrymartland.multijmx.jmxrunner;
 
+import com.google.common.collect.Iterables;
 import uk.co.harrymartland.multijmx.domain.JMXConnectionResponse;
 import uk.co.harrymartland.multijmx.domain.JMXValueResult;
 import uk.co.harrymartland.multijmx.domain.connection.JMXConnection;
@@ -8,12 +9,11 @@ import uk.co.harrymartland.multijmx.service.connector.ConnectorService;
 
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
-import javax.management.remote.JMXConnector;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 public abstract class AbstractJmxRunner implements Callable<JMXConnectionResponse> {
 
@@ -29,30 +29,22 @@ public abstract class AbstractJmxRunner implements Callable<JMXConnectionRespons
         this.connectorService = connectorService;
     }
 
-    public JMXConnectionResponse call() throws Exception {//todo refactor
+    public JMXConnectionResponse call() throws Exception {
         try {
-            JMXConnector jmxc = connectorService.connect(jmxConnection.getJmxServiceURL(), getEnv());
-            MBeanServerConnection mBeanServerConnection = jmxc.getMBeanServerConnection();
 
-            Iterator<JMXValueRetriever> jmxValueRetrieverIterator = jmxValueRetrievers.iterator();
-            Iterator<ObjectName> objectNameIterator = objectNames.iterator();
+            MBeanServerConnection mBeanServerConnection = connectorService.
+                    connect(jmxConnection.getJmxServiceURL(), getEnv()).getMBeanServerConnection();
 
-            List<JMXValueResult> values = new ArrayList<>(jmxValueRetrievers.size());
-            ObjectName objectName = objectNameIterator.next();
-            while (jmxValueRetrieverIterator.hasNext()) {
-
+            Iterator<ObjectName> objectNameIterator = Iterables.cycle(objectNames).iterator();
+            List<JMXValueResult> values = jmxValueRetrievers.stream().map(jmxValueRetriever -> {
                 try {
-                    values.add(new JMXValueResult(jmxValueRetrieverIterator.next().getValue(mBeanServerConnection, objectName)));
+                    return new JMXValueResult(jmxValueRetriever.getValue(mBeanServerConnection, objectNameIterator.next()));
                 } catch (Exception e) {
-                    values.add(new JMXValueResult(e));
+                    return new JMXValueResult(e);
                 }
+            }).collect(Collectors.toList());
 
-                if (objectNameIterator.hasNext()) {
-                    objectName = objectNameIterator.next();
-                }
-            }
             return new JMXConnectionResponse(jmxConnection.getDisplay(), values);
-
         } catch (Exception e) {
             return new JMXConnectionResponse(jmxConnection.getDisplay(), e);
         }
