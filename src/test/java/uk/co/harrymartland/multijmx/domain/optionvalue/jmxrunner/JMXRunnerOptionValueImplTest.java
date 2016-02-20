@@ -14,6 +14,7 @@ import uk.co.harrymartland.multijmx.domain.optionvalue.username.UserNameOptionVa
 import uk.co.harrymartland.multijmx.jmxrunner.PasswordJmxRunner;
 import uk.co.harrymartland.multijmx.jmxrunner.RemoteJmxRunner;
 import uk.co.harrymartland.multijmx.service.commandline.CommandLineService;
+import uk.co.harrymartland.multijmx.service.connector.ConnectorService;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -26,7 +27,8 @@ public class JMXRunnerOptionValueImplTest extends AbstractOptionValueTest<JMXRun
     private PasswordOptionValue passwordOptionValue = Mockito.mock(PasswordOptionValue.class);
     private SignatureOptionValue signatureOptionValue = Mockito.mock(SignatureOptionValue.class);
     private ObjectOptionValue objectOptionValue = Mockito.mock(ObjectOptionValue.class);
-    private ConnectionOptionValue connectionOptionValue = Mockito.mock(ConnectionOptionValue.class);//look into using annotations
+    private ConnectionOptionValue connectionOptionValue = Mockito.mock(ConnectionOptionValue.class);
+    private ConnectorService connectorService = Mockito.mock(ConnectorService.class);
 
     @Test
     public void testShouldReturnPasswordJMXRunnersWithUsernameAndPasswordSetWhenUsernameAndPasswordAreProvider() throws Exception {
@@ -94,6 +96,6 @@ public class JMXRunnerOptionValueImplTest extends AbstractOptionValueTest<JMXRun
 
     @Override
     protected JMXRunnerOptionValueImpl createOptionValue(CommandLineService commandLineService) {
-        return new JMXRunnerOptionValueImpl(commandLineService, userNameOptionValue, passwordOptionValue, signatureOptionValue, objectOptionValue, connectionOptionValue);
+        return new JMXRunnerOptionValueImpl(commandLineService, userNameOptionValue, passwordOptionValue, signatureOptionValue, objectOptionValue, connectionOptionValue, connectorService);
     }
 }

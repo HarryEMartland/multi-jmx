@@ -26,6 +26,8 @@ import uk.co.harrymartland.multijmx.domain.optionvalue.username.UserNameOptionVa
 import uk.co.harrymartland.multijmx.module.ArgumentModule;
 import uk.co.harrymartland.multijmx.service.connection.ConnectionService;
 import uk.co.harrymartland.multijmx.service.connection.ConnectionServiceImpl;
+import uk.co.harrymartland.multijmx.service.connector.ConnectorService;
+import uk.co.harrymartland.multijmx.service.connector.ConnectorServiceImpl;
 import uk.co.harrymartland.multijmx.service.file.FileReaderService;
 import uk.co.harrymartland.multijmx.service.file.FileReaderServiceImpl;
 
@@ -67,6 +69,7 @@ public class OptionsServiceImplTest {
                 bind(ExpressionParser.class).to(SpelExpressionParser.class);
                 bind(ConnectionService.class).to(ConnectionServiceImpl.class);
                 bind(FileReaderService.class).to(FileReaderServiceImpl.class);
+                bind(ConnectorService.class).to(ConnectorServiceImpl.class);
             }
         });
         injector.injectMembers(this);

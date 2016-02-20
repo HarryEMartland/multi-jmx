@@ -14,6 +14,8 @@ import uk.co.harrymartland.multijmx.module.ArgumentModule;
 import uk.co.harrymartland.multijmx.processer.MultiJMXProcessor;
 import uk.co.harrymartland.multijmx.service.connection.ConnectionService;
 import uk.co.harrymartland.multijmx.service.connection.ConnectionServiceImpl;
+import uk.co.harrymartland.multijmx.service.connector.ConnectorService;
+import uk.co.harrymartland.multijmx.service.connector.ConnectorServiceImpl;
 import uk.co.harrymartland.multijmx.service.file.FileReaderService;
 import uk.co.harrymartland.multijmx.service.file.FileReaderServiceImpl;
 import uk.co.harrymartland.multijmx.waitable.Waitable;
@@ -45,6 +47,7 @@ public class MainTest {
                 bind(Writer.class).toInstance(retreivableWriter);
                 bind(ConnectionService.class).to(ConnectionServiceImpl.class);
                 bind(Waitable.class).to(NoWait.class);
+                bind(ConnectorService.class).to(ConnectorServiceImpl.class);
                 bind(FileReaderService.class).to(FileReaderServiceImpl.class);
             }
         }, new ArgumentModule()).injectMembers(this);

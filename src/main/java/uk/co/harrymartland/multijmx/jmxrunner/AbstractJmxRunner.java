@@ -4,11 +4,11 @@ import uk.co.harrymartland.multijmx.domain.JMXConnectionResponse;
 import uk.co.harrymartland.multijmx.domain.JMXValueResult;
 import uk.co.harrymartland.multijmx.domain.connection.JMXConnection;
 import uk.co.harrymartland.multijmx.domain.valueretriver.JMXValueRetriever;
+import uk.co.harrymartland.multijmx.service.connector.ConnectorService;
 
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
-import javax.management.remote.JMXConnectorFactory;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -20,16 +20,18 @@ public abstract class AbstractJmxRunner implements Callable<JMXConnectionRespons
     private final List<JMXValueRetriever> jmxValueRetrievers;
     private final List<ObjectName> objectNames;
     private final JMXConnection jmxConnection;
+    private final ConnectorService connectorService;
 
-    public AbstractJmxRunner(List<JMXValueRetriever> jmxValueRetrievers, List<ObjectName> objectNames, JMXConnection jmxConnection) {
+    public AbstractJmxRunner(List<JMXValueRetriever> jmxValueRetrievers, List<ObjectName> objectNames, JMXConnection jmxConnection, ConnectorService connectorService) {
         this.jmxValueRetrievers = jmxValueRetrievers;
         this.objectNames = objectNames;
         this.jmxConnection = jmxConnection;
+        this.connectorService = connectorService;
     }
 
     public JMXConnectionResponse call() throws Exception {//todo refactor
         try {
-            JMXConnector jmxc = JMXConnectorFactory.connect(jmxConnection.getJmxServiceURL(), getEnv());
+            JMXConnector jmxc = connectorService.connect(jmxConnection.getJmxServiceURL(), getEnv());
             MBeanServerConnection mBeanServerConnection = jmxc.getMBeanServerConnection();
 
             Iterator<JMXValueRetriever> jmxValueRetrieverIterator = jmxValueRetrievers.iterator();

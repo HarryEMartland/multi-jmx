@@ -2,6 +2,7 @@ package uk.co.harrymartland.multijmx.jmxrunner;
 
 import uk.co.harrymartland.multijmx.domain.connection.JMXConnection;
 import uk.co.harrymartland.multijmx.domain.valueretriver.JMXValueRetriever;
+import uk.co.harrymartland.multijmx.service.connector.ConnectorService;
 
 import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
@@ -14,8 +15,8 @@ public class PasswordJmxRunner extends RemoteJmxRunner {
     private final String username;
     private final String password;
 
-    public PasswordJmxRunner(List<JMXValueRetriever> attributes, List<ObjectName> objectNames, JMXConnection jmxConnection, String username, String password) {
-        super(attributes, objectNames, jmxConnection);
+    public PasswordJmxRunner(List<JMXValueRetriever> attributes, List<ObjectName> objectNames, JMXConnection jmxConnection, String username, String password, ConnectorService connectorService) {
+        super(attributes, objectNames, jmxConnection, connectorService);
         this.username = username;
         this.password = password;
     }
