@@ -29,8 +29,9 @@ import static uk.co.harrymartland.multijmx.ExceptionUtils.getStackTrace;
 
 public class MainTest {
 
+    public static final String VALID_CONNECTION = "service:jmx:rmi://test1/jndi/rmi://:9999/jmxrmi";
     private final String VALID_OBJECT_NAME = "java.lang:type=OperatingSystem";
-    private final String[] VALID_ARGS = {"-o", VALID_OBJECT_NAME, "-a", "att", "-d", " ", "validConnection"};
+    private final String[] VALID_ARGS = {"-o", VALID_OBJECT_NAME, "-a", "att", "-d", " ", VALID_CONNECTION};
 
     @Inject
     private Main main;

@@ -14,6 +14,8 @@ import uk.co.harrymartland.multijmx.service.commandline.CommandLineService;
 
 public class ValidatorServiceImplTest {
 
+    public static final String VALID_CONNECTION = "service:jmx:rmi://test1/jndi/rmi://:9999/jmxrmi";
+
     private final String VALID_OBJECT_NAME = "java.lang:type=OperatingSystem";
 
     @Inject
@@ -29,13 +31,13 @@ public class ValidatorServiceImplTest {
 
     @Test
     public void testShouldThrowExceptionWhenOrderByValueAndConnection() throws Exception {
-        createCommandLine("-o", VALID_OBJECT_NAME, "-a", "att1", "-v", "-c", "validConnection");
+        createCommandLine("-o", VALID_OBJECT_NAME, "-a", "att1", "-v", "-c", VALID_CONNECTION);
         assertExceptionThrown("Cannot order by connection and display");
     }
 
     @Test
     public void testShouldNotThrowExceptionWhenOneObjectAndMultipleAttributes() throws Exception {
-        createCommandLine("-o", VALID_OBJECT_NAME, "-a", "att1", "-a", "att2", "-a", "att3", "validConnection");
+        createCommandLine("-o", VALID_OBJECT_NAME, "-a", "att1", "-a", "att2", "-a", "att3", VALID_CONNECTION);
         assertNoExceptionThrown();
     }
 
@@ -59,55 +61,55 @@ public class ValidatorServiceImplTest {
 
     @Test
     public void testShouldNotThrowExceptionWhenSameNumberOfObjectsAndAttributes() throws Exception {
-        createCommandLine("-a", "att1", "-a", "att3", "-a", "att2", "-o", VALID_OBJECT_NAME, "-o", VALID_OBJECT_NAME, "-o", VALID_OBJECT_NAME, "validConnection");
+        createCommandLine("-a", "att1", "-a", "att3", "-a", "att2", "-o", VALID_OBJECT_NAME, "-o", VALID_OBJECT_NAME, "-o", VALID_OBJECT_NAME, VALID_CONNECTION);
         assertNoExceptionThrown();
     }
 
     @Test
     public void testShouldThrowExceptionWhenMoreAttributesThanObjects() throws Exception {
-        createCommandLine("-a", "att1", "-a", "att1", "-a", "att1", "-o", VALID_OBJECT_NAME, "-o", VALID_OBJECT_NAME, "validConnection");
+        createCommandLine("-a", "att1", "-a", "att1", "-a", "att1", "-o", VALID_OBJECT_NAME, "-o", VALID_OBJECT_NAME, VALID_CONNECTION);
         assertExceptionThrown("Number of objects and signatures must match");
     }
 
     @Test
     public void testShouldThrowExceptionWhenMoreObjectsThanAttributes() throws Exception {
-        createCommandLine("-a", "att1", "-a", "att2", "-o", VALID_OBJECT_NAME, "-o", VALID_OBJECT_NAME, "-o", VALID_OBJECT_NAME, "validConnection");
+        createCommandLine("-a", "att1", "-a", "att2", "-o", VALID_OBJECT_NAME, "-o", VALID_OBJECT_NAME, "-o", VALID_OBJECT_NAME, VALID_CONNECTION);
         assertExceptionThrown("Number of objects and signatures must match");
     }
 
     @Test
     public void testShouldNotThrowExceptionWithOneObjectAndOneAttribute() throws ParseException {
-        createCommandLine("-a", "att", "-o", VALID_OBJECT_NAME, "validConnection");
+        createCommandLine("-a", "att", "-o", VALID_OBJECT_NAME, VALID_CONNECTION);
         assertNoExceptionThrown();
     }
 
     @Test
     public void testShouldAcceptMethodWithNoArgsAsAttribute() throws Exception {
-        createCommandLine("-a", "att()", "-o", VALID_OBJECT_NAME, "validConnection");
+        createCommandLine("-a", "att()", "-o", VALID_OBJECT_NAME, VALID_CONNECTION);
         assertNoExceptionThrown();
     }
 
     @Test
     public void testShouldAcceptMethodWithStringArgumentAsAttribute() throws Exception {
-        createCommandLine("-a", "att(\"test\")", "-o", VALID_OBJECT_NAME, "validConnection");
+        createCommandLine("-a", "att(\"test\")", "-o", VALID_OBJECT_NAME, VALID_CONNECTION);
         assertNoExceptionThrown();
     }
 
     @Test
     public void testShouldAcceptMethodWithMultipleStringArgumentAsAttribute() throws Exception {
-        createCommandLine("-a", "att(\"test\",\"test2\")", "-o", VALID_OBJECT_NAME, "validConnection");
+        createCommandLine("-a", "att(\"test\",\"test2\")", "-o", VALID_OBJECT_NAME, VALID_CONNECTION);
         assertNoExceptionThrown();
     }
 
     @Test
     public void testShouldAcceptMethodWithIntegerArgumentAsAttribute() throws Exception {
-        createCommandLine("-a", "att(4)", "-o", VALID_OBJECT_NAME, "validConnection");
+        createCommandLine("-a", "att(4)", "-o", VALID_OBJECT_NAME, VALID_CONNECTION);
         assertNoExceptionThrown();
     }
 
     @Test
     public void testShouldNotAcceptMethodWithInvalidClassAsAttribute() throws Exception {
-        createCommandLine("-a", "att(new uk.co.harrymartland.Test())", "-o", VALID_OBJECT_NAME, "validConnection");
+        createCommandLine("-a", "att(new uk.co.harrymartland.Test())", "-o", VALID_OBJECT_NAME, VALID_CONNECTION);
         assertExceptionThrown("Incorrect argument parameter: new uk.co.harrymartland.Test()");
     }
 

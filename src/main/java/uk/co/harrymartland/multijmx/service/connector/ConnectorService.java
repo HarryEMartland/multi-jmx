@@ -7,4 +7,6 @@ import java.util.Map;
 
 public interface ConnectorService {
     JMXConnector connect(JMXServiceURL serviceURL, Map<String, ?> environment) throws IOException;
+
+    String importFrom(int processId) throws IOException;
 }
