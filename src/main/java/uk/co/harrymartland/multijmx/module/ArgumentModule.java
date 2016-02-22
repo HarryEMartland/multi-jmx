@@ -1,6 +1,7 @@
 package uk.co.harrymartland.multijmx.module;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -89,6 +90,7 @@ public class ArgumentModule extends AbstractModule {
     }
 
     private <Interface extends OptionValue, Implementation extends Interface> void bindOptionValue(Class<Interface> optionInterface, Class<Implementation> optionImplementation) {
+        bind(optionImplementation).in(Singleton.class);
         bind(optionInterface).to(optionImplementation);
         getOptionBinder().addBinding().to(optionImplementation);
     }

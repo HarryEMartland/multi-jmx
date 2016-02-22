@@ -146,6 +146,5 @@ public class OptionsServiceImplTest {
         Option serviceOption = optionsService.getOptions().getOption(arg);
         Assert.assertNotNull("Injected value should not be null", optionValue);
         Assert.assertNotNull("Service value should not be null", serviceOption);
-        Assert.assertEquals("Option value should be singleton", optionValue.getOption(), serviceOption);
     }
 }
