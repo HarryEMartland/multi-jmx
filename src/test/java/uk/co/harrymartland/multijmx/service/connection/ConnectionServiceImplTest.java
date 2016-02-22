@@ -33,7 +33,6 @@ public class ConnectionServiceImplTest {
         thenShouldReturnConnection("23", "Process: 23", new JMXServiceURL(VALID_PROCESS_CONNECTION));
     }
 
-    //todo readme example url connection and process connection
     @Test
     public void testShouldFailValidationWithInvalidProcessId() throws Exception {
         thenShouldFailValidation("23", "No process found for id: 23");
