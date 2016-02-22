@@ -2,7 +2,6 @@ package uk.co.harrymartland.multijmx.domain.optionvalue.threadpool;
 
 import com.google.inject.Inject;
 import org.apache.commons.cli.Option;
-import uk.co.harrymartland.multijmx.domain.LifeCycleAble;
 import uk.co.harrymartland.multijmx.domain.optionvalue.AbstractOptionValue;
 import uk.co.harrymartland.multijmx.domain.optionvalue.maxthreads.MaxThreadsOptionValue;
 import uk.co.harrymartland.multijmx.service.commandline.CommandLineService;
@@ -10,7 +9,7 @@ import uk.co.harrymartland.multijmx.service.commandline.CommandLineService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ThreadPoolOptionValueImpl extends AbstractOptionValue<ExecutorService> implements ThreadPoolOptionValue, LifeCycleAble {
+public class ThreadPoolOptionValueImpl extends AbstractOptionValue<ExecutorService> implements ThreadPoolOptionValue {
 
     private MaxThreadsOptionValue maxThreadsOptionValue;
 

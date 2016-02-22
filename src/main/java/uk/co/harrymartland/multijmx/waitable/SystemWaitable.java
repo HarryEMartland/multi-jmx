@@ -1,5 +1,6 @@
 package uk.co.harrymartland.multijmx.waitable;
 
+import com.google.inject.Singleton;
 import uk.co.harrymartland.multijmx.ExceptionUtils;
 import uk.co.harrymartland.multijmx.domain.LifeCycleAble;
 
@@ -8,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
+@Singleton
 public class SystemWaitable implements Waitable, LifeCycleAble {
 
     BufferedReader reader = null;
