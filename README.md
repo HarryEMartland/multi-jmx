@@ -29,15 +29,15 @@ note: when using the null type use the full canonical name for the class and use
 ## Multiple values
 It is possible to request multiple values from the same or different MBeans.
 If the values are from different MBeans you must provide the mbean for each attribute/method.
-To specify an MBean use the -o and then specify the ObjectName.
-To call a method or attribute add the -a parameter then the name of the attribute or the method stub.
+To specify an MBean use the `-o` and then specify the ObjectName.
+To call a method or attribute add the `-a` parameter then the name of the attribute or the method stub.
 
 ## Ordering of Values
 When dealing with a number of servers it is often only then high or low values which you are interested in.
-The argument -v will order the results returned from the MBean, the order will be determined by the compareTo function on the returned object.
+The argument `-v` will order the results returned from the MBean, the order will be determined by the compareTo function on the returned object.
 High value will be at the bottom where the will be visible first on the command line.
-To reverse the order pass the -r argument.
-The default order is the order that the connections were specified however it is possible to order the connections by their string value by using the -c argument.
+To reverse the order pass the `-r` argument.
+The default order is the order that the connections were specified however it is possible to order the connections by their string value by using the `-c` argument.
 
 ## Help
 To view the help text run the jar with no arguments or pass the -h argument
@@ -56,6 +56,11 @@ usage: multi-jmx -a <attribute> [-c] [-d <delimiter>] [-f <file path>] [-h] -o <
      -v,--order-value                 Order the results by value
 ```
 
+## Connections
+It is possible to connect to MBean servers by using either the process ID for local servers or full urls for local and remote servers.
+You are able to connect using both process ID's and urls at the same time.
+To connect using a process ID list it either on the command line as an argument or inside a file and set the file argument to the location of the file.
+Using urls is similar as using process ID's' however a full must be used. An example url is `service:jmx:rmi://localhost/jndi/rmi://:1099/jmxrmi`.
 
 #### Attribute Example
     java -jar target/multi-jmx-1.0-SNAPSHOT-jar-with-dependencies.jar -o java.lang:type=OperatingSystem -a AvailableProcessors <pid or url>
