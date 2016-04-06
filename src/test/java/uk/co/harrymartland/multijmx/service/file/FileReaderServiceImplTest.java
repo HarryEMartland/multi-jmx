@@ -18,7 +18,7 @@ public class FileReaderServiceImplTest {
     @Test
     public void testShouldReturnTrueWhenFileExists() throws Exception {
         //noinspection ConstantConditions
-        Assert.assertTrue(fileReaderService.exists(Paths.get(getClass().getClassLoader().getResource("testRMIUrls.csv").getPath())));
+        Assert.assertTrue(fileReaderService.exists(Paths.get("src/test/resources/testRMIUrls.csv")));
     }
 
     @Test
@@ -28,6 +28,6 @@ public class FileReaderServiceImplTest {
                 "service:jmx:rmi://test1/jndi/rmi://:9999/jmxrmi",
                 "service:jmx:rmi://test2/jndi/rmi://:9999/jmxrmi",
                 "service:jmx:rmi://test3/jndi/rmi://:9999/jmxrmi"
-        ), fileReaderService.readFromFile(Paths.get(getClass().getClassLoader().getResource("testRMIUrls.csv").getPath())));
+        ), fileReaderService.readFromFile(Paths.get("src/test/resources/testRMIUrls.csv")));
     }
 }
