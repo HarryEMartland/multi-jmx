@@ -3,6 +3,10 @@ package uk.co.harrymartland.multijmx;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.ParseException;
 import uk.co.harrymartland.multijmx.domain.JMXConnectionResponse;
@@ -19,11 +23,6 @@ import uk.co.harrymartland.multijmx.service.options.OptionsService;
 import uk.co.harrymartland.multijmx.service.validator.ValidatorService;
 import uk.co.harrymartland.multijmx.waitable.Waitable;
 import uk.co.harrymartland.multijmx.writer.Writer;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Main {
 
@@ -117,7 +116,7 @@ public class Main {
         if (jmxValueResult.isError()) {
             return jmxValueResult.getException().getMessage();
         } else {
-            return jmxValueResult.getValue().toString();
+            return Objects.toString(jmxValueResult.getValue());
         }
     }
 

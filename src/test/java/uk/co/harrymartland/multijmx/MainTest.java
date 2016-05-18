@@ -1,8 +1,12 @@
 package uk.co.harrymartland.multijmx;
 
+import static uk.co.harrymartland.multijmx.ExceptionUtils.getStackTrace;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,12 +24,6 @@ import uk.co.harrymartland.multijmx.service.file.FileReaderService;
 import uk.co.harrymartland.multijmx.service.file.FileReaderServiceImpl;
 import uk.co.harrymartland.multijmx.waitable.Waitable;
 import uk.co.harrymartland.multijmx.writer.Writer;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static uk.co.harrymartland.multijmx.ExceptionUtils.getStackTrace;
 
 public class MainTest {
 
@@ -86,6 +84,16 @@ public class MainTest {
         main.run(VALID_ARGS);
 
         Assert.assertEquals("connection 3\nconnection2 4\n", retreivableWriter.getValue());
+    }
+
+    @Test
+    public void testShouldDisplayNullResults() throws Exception {
+        mockResponses = Arrays.asList(
+                createConnectionResponse("connection", createValueResult((Comparable) null)));
+
+        main.run(VALID_ARGS);
+
+        Assert.assertEquals("connection null\n", retreivableWriter.getValue());
     }
 
     @Test
